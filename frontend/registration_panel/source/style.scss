@@ -1,0 +1,193 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Roboto:wght@400;500&display=swap");
+
+@font-face {
+    font-family: 'icons';
+    src:  url('../fonts/icons.eot?uelfqt');
+    src:  url('../fonts/icons.eot?uelfqt#iefix') format('embedded-opentype'),
+      url('../fonts/icons.ttf?uelfqt') format('truetype'),
+      url('../fonts/icons.woff?uelfqt') format('woff'),
+      url('../fonts/icons.svg?uelfqt#icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+  
+  [class^="_icon-"]::before, [class*=" _icon-"]::before {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icons' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  ._icon-eye:before {
+    content: "\e9ce";
+  }
+  ._icon-eye-blocked:before {
+    content: "\e9d1";
+  }
+  ._icon-info:before {
+    content: "\ea0c";
+  }
+
+html{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: "Roboto";
+    font-size: 16px;
+    background-color: darken(#b3d4fc, 20%);
+}
+
+
+
+.registration{
+   height: 100vh;
+   position: relative;
+
+    &__body{
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       min-width: 450px;
+       background-color: #d8e3fe;
+       padding: 50px;
+    }
+
+    &__title{
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 30px;
+        font-family: "Quicksand";
+        font-weight: 700;
+    }
+
+    &__form{
+        &__item{
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border: 1.5px solid #eee;
+            transition: all .2s linear;
+            &:focus-within{
+                border-color: #3A79FF;
+
+            } 
+            &__input{
+                width: 75%;
+                padding: 20px;
+                border: 0;
+            }
+
+            &__control{
+                display: flex;
+                align-items: center;
+                position: absolute;
+                right: 2%;
+                top: 50%;
+                transform: translateY(-50%);
+                
+                &:hover{
+                    z-index: 2;
+                }
+                ._icon-eye,._icon-eye-blocked, ._icon-info{
+                    cursor: pointer;
+                    transition: all 0.1s linear;
+                    padding: 5px;
+                    font-size: 24px;
+                    
+                    &:hover{
+                        background-color:#9fbfff;
+                        border-radius: 5px;
+                        
+                        .info_password{
+                            visibility: visible;
+                            opacity: 1;
+                        }
+                    }
+                }                
+            }
+
+            &__label{
+                position: absolute;
+                pointer-events: none;
+                top: 50%;
+                left: 3%;
+                transform: translateY(-50%);
+                font-weight: 500;
+                font-size: 14px;
+                transition: all 0.1s ease;
+                &._active{
+                    top: 10%;
+                    transform: translateY(0);
+                    font-size: 12px;
+                }
+            }
+
+            &__submit{
+                font-size: 18px;
+                background-color:  rgb(21, 196, 65);
+                border: 0;
+                width: 100%;
+                padding: 10px 0px;
+                &:hover{
+                    background-color: darken(rgb(21, 196, 65), 5%);
+                }
+            }
+
+            
+            .info_password{
+                display: inline-flex;
+                border-radius: 2px;
+                text-align: center;
+                visibility: hidden;
+                opacity: 0;
+                position: absolute;
+                padding: 10px;
+                width: 200px;
+                font-size: 14px;
+                line-height: 1.4;
+                top: 0;
+                left: 100%;
+                color: #fff;
+                transform: translateX(5px);
+                background-color: #0035f5;
+                transition: all 0.2s linear;
+                &:hover{
+                    visibility: visible;
+                    opacity: 1;
+                }
+            }
+            
+        }
+
+        ._error{
+            border-color: rgb(243, 0, 0);
+            &:focus-within{
+                border-color: #3A79FF;
+            }
+        }
+    }   
+    .info-error{
+        visibility: hidden;
+        opacity: 0;
+        color:rgb(243, 0, 0);
+        position: relative;
+        top: -10px;
+        &._error{
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+}
