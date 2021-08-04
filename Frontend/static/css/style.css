@@ -1,0 +1,164 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 14px;
+  color: black;
+  font-family: 'Open Sans', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.open-btn-popup{
+  padding: 10px;
+  background-color: yellow;
+  margin: 100px auto;
+}
+
+.modal__window{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  transition: all 0.1s linear;
+}
+
+.modal__window.open, .modal__window__content.open{
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal__window__wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.modal__window__content{
+  transform: translateY(-100vh);
+  transition: transform .4s linear;
+  max-width: 500px;
+  background-color: #fff;
+  padding: 20px;
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+.form__item__input._error{
+  box-shadow: 0px 2px 2px rgb(243, 0, 0); 
+}
+
+.form *{
+  outline: none;
+}
+
+/* .form *:focus{
+  box-shadow: 0px 2px 2px rgb(21, 241, 21);
+} */
+
+.modal__window__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgb(20, 63, 182);
+}
+
+.modal__window__close{
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.form__item{
+  margin-bottom: 20px;
+}
+
+.form__item:last-child{
+  margin-bottom: 0;
+}
+
+.form__item p{
+  margin-bottom: 2px;
+  margin-left: 4px;
+}
+
+.form__item__input {
+  width: 300px;
+  height: 30px;
+  border: 2px solid #ccc;
+  padding-left:  5px;
+  border-radius: 5px;
+  font-size: 15px;
+  transition: all .2s linear;
+}
+
+.form__item input[type="radio"]{
+  margin-right: 5px;
+}
+
+.form__item__gender{
+  display: flex;
+  align-items: center;
+}
+
+.form__item__gender p{
+  margin-right: 10px;
+}
+
+.form__item__gender p:last-child{
+  margin-right: 0;
+}
+
+.form__item button{
+  padding: 6px 8px 6px 8px;
+  font-size: 15px;
+  font-weight: 400;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.registration-btn{
+  background-color: rgb(21, 241, 21);
+  margin-right: 7px;
+}
+
+.cancel-btn{
+  background-color: rgb(253, 74, 74);
+  position: relative;
+}
+
+.wrapper__password{
+  position: relative;
+}
+
+.btn-look-password{
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background:url(../img/iconmonstr-eye-9.svg) no-repeat right center;
+}
+
+.btn-look-password.view{
+  background: url(../img/iconmonstr-eye-10.svg) no-repeat right center;
+}

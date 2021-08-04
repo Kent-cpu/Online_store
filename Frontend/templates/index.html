@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -21,7 +22,7 @@
                     <p class="modal__window__close">&#10006;</p>
                 </div>
                 <div class="modal__window__body">
-                    <div class="form">
+                   <div class="form">
                         <form method="post">
                             <div class="form__item">
                                 <p>Имя</p>
@@ -53,8 +54,8 @@
 
                             <div class="form__item">
                                 <div class="form__item__gender">
-                                    <p><input type="radio" checked name="gender">Мужской </p>
-                                    <p><input type="radio" name="gender">Женский</p>
+                                    <p><input type="radio" checked name="gender" value="man">Мужской </p>
+                                    <p><input type="radio" name="gender" value="woman">Женский</p>
                                 </div>
                             </div>
                             <div class="form__item">
@@ -68,7 +69,9 @@
         </div>
     </div>
 
-    <!-- <img src="../img/iconmonstr-eye-9.svg" alt=""> -->
+    <!-- <img src="../img/iconmonstr-eye-9.svg" alt="">   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}"><script src=../static/javascript/main.js></script>-->
+<script src=../static/javascript/main.js></script>
+
 </body>
 
 </html>

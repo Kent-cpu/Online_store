@@ -628,7 +628,7 @@ h5 {
   width: 64px;
   height: 64px;
   border-radius: 100%;
-  background: #fff url('../../img/icon-loupe.svg') no-repeat 50% 50%;
+  background: #fff url('../img/icon-loupe.svg') no-repeat 50% 50%;
   opacity: 0;
   -webkit-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
@@ -713,7 +713,7 @@ h5 {
   display: block;
   width: 40px;
   height: 40px;
-  background: url('../../img/arrow-left-icon.svg') no-repeat center center;
+  background: url('../img/arrow-left-icon.svg') no-repeat center center;
 }
 
 .btn-blog--prev {
@@ -885,7 +885,7 @@ h5 {
 }
 
 .section-get-started {
-  background: url('../../img/clouds-get-started.svg') no-repeat center center;
+  background: url('../img/clouds-get-started.svg') no-repeat center center;
   background-color: #6687FF;
   text-align: center;
 }

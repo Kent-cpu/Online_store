@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registration page">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registration_panel_reset.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='source/registration_panel_style.css')}}">
+    <title>Регистрация</title>
+</head>
+<body>
+    <div class="registration">
+        <div class="registration__wrapper">
+            <div class="registration__body">
+                <h1 class = "registration__title">Registration</h1>
+                <form action="#" class="registration__form">
+                    <div class="registration__form__item">
+                        <label  class = "registration__form__item__label">
+<!--                                for="nickname">-->
+                            Nickname *</label>
+                        <input autocomplete = "off" class = "registration__form__item__input required" type="text" name = "nickname" id = "nickname">
+                        <div class="registration__form__item__control">
+                            <p href="#!" class = "_icon-info">
+                                <span class = "info_password">The nickname must contain at least 5 characters.</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class = "info-error">ttththth</p>
+                    <div class="registration__form__item">
+                        <label class = "registration__form__item__label">
+<!--                               for="email"-->
+                        Email *</label>
+                        <input autocomplete = "off" class = "registration__form__item__input _email required" type="text"  name = "email" id = "email">
+                    </div>
+                    <p class = "info-error">ttththth</p>
+                    <div class="registration__form__item">
+                        <label class = "registration__form__item__label">
+<!--                            for="password">-->
+                            Password *</label>
+                        <input autocomplete = "off" class = "registration__form__item__input _password required" type="password" name = "psw" id = "psw">
+                        <div class="registration__form__item__control">
+                            <p href="#!" class = "_icon-eye" ></p>
+                            <p href="#!" class = "_icon-info" >
+                                <span class = "info_password">Password must be 8 characters long, contain at least one number, one upper and one lowercase letter.</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class = "info-error">ttththth</p>
+                    <div class="registration__form__item">
+                        <label class = "registration__form__item__label">
+<!--                            for="psw-repeat"-->
+                            Repeat Password *</label>
+                        <input autocomplete = "off" class = "registration__form__item__input _password required" type="password"  name = "psw-repeat" id = "psw-repeat">
+                        <div class="registration__form__item__control">
+                            <p href="#!" class = "_icon-eye"></p>
+                            <p href="#!" class = "_icon-info">
+                                <span class = "info_password">Password must be 8 characters long, contain at least one number, one upper and one lowercase letter.</span>
+                            </p>
+                            
+                        </div>
+                    </div>
+                    <p class = "info-error">ttththth</p>
+                    <button class="registration__form__item__submit disabled" type="submit">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src = "../static/javascript/registration_panel_script.js"></script>
+</body>
+</html>
