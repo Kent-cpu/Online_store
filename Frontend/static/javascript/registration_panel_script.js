@@ -57,16 +57,7 @@ registrationButton.addEventListener('click', (e) => {
         return !element.classList.contains('_error');
     })
     if (correctData) {
-        const request = new XMLHttpRequest();
-        request.open('POST', '/registration');
-        const data = new FormData();
-        nickname = document.getElementById("nickname").value;
-        email = document.getElementById("email").value;
-        password = document.getElementById("psw").value;
-        data.append('nickname', nickname);
-        data.append('email', email);
-        data.append('password', password);
-        request.send(data);
+        registration()
         console.log("Зареган")
     } else {
         console.log("УУУ сука");
@@ -103,4 +94,36 @@ function addOrRemoveClass(className, action, ...args) {
             args[i].classList.remove(className);
         }
     }
+}
+
+function registration(){
+  const request = new XMLHttpRequest();
+  request.open('POST', '/registration');
+  data = new FormData();
+  nickname = document.getElementById("nickname").value;
+  email = document.getElementById("email").value;
+  password = document.getElementById("psw").value;
+  data.append('nickname', nickname);
+  data.append('email', email);
+  data.append('password', password);
+  request.onreadystatechange = function(){
+    if (request.readyState === 4 && request.status === 200){
+      answer = request.responseText;
+      if(answer === "1000"){
+         console.log("Correct");
+      } else if(answer.startsWith("1002:")){
+         answer = answer.substr(answer.indexOf(":") + 1)
+         index = answer.indexOf(";")
+         while(index != -1){
+           console.log(answer.slice(0,index))
+           answer = answer.substr(index + 1)
+           index = answer.indexOf(";")
+         }
+         console.log(request.responseText)
+      } else {
+         console.log("Error")
+      }
+    }
+  }
+  request.send(data);
 }

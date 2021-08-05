@@ -2,9 +2,10 @@ import threading
 
 from werkzeug.utils import redirect
 from Database.Database import Database
+from Backend.SQLiteErrorCods import *
 
 from Utils import config_parser
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -14,17 +15,7 @@ class Server:
         self.host = host
         self.port = port
         self.app = Flask(__name__, static_folder="C:\\Users\\Vemarus\\Unity\\Online_store\\Frontend\\static", template_folder="C:\\Users\\Vemarus\\Unity\\Online_store\\Frontend\\templates")
-        sqlite_insert_with_param = """INSERT INTO Users
-                                                      (nickname, email, password)
-                                                      VALUES
-                                                      (?, ?, ?);"""
-        self.database = Database("Users_database.db", sqlite_insert_with_param)
-        database_users_table = '''CREATE TABLE Users (
-                                        id INTEGER PRIMARY KEY,
-                                        nickname text NOT NULL UNIQUE,
-                                        email text NOT NULL UNIQUE,
-                                        password text NOT NULL);'''
-        #self.database.add_table(database_users_table)
+        self.database = Database("Users_database.db")
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.get_shop)
         self.app.add_url_rule('/shop', view_func=self.get_shop)
@@ -57,12 +48,17 @@ class Server:
                 password = request.form.get('password')
                 if nickname.strip() != "" and email.strip() != "" and password.strip() != "":
                     data = (nickname, email, password)
-                    self.database.add_data_to_table(data)
-                    return "Correct"
+                    answer = self.database.add_data_to_table(data)
+                    if answer[0] == OK_COD:
+                        return str(OK_COD)
+                    elif answer[0] == UNIQUE_FIELD_ERROR_COD:
+                        return f"{str(UNIQUE_FIELD_ERROR_COD)}:{answer[1]}"
+                    else:
+                        return str(ERROR_COD)
                 else:
-                    return "Not all fields are filled in"
+                    return str(ERROR_COD)
             except():
-                return "ERROR"
+                return str(ERROR_COD)
         else:
             return render_template("registration_panel.html")
 
