@@ -81,7 +81,22 @@ function validate(input, indexErrorInfo) {
     } else if (input.classList.contains('_password') && !regularPassword.test(String(input.value))) {
         informationError[indexErrorInfo].innerHTML = "Wrong format";
         addOrRemoveClass('_error', 'add', informationError[indexErrorInfo], itemForm[indexErrorInfo]);
-    } else {
+    } else if (input.classList.contains('_password')) {
+        const inputPassword = document.querySelectorAll('._password');
+        if (inputPassword[0].value.length != 0 && inputPassword[1].value.length != 0 && inputPassword[0].value != inputPassword[1].value) {
+            for (let i = 0; i < inputPassword.length; ++i) {
+                let indexInputPassword = [...inputForm].indexOf(inputPassword[i]);
+                informationError[indexInputPassword].innerHTML = "Passwords don't match";
+                addOrRemoveClass('_error', 'add', informationError[indexInputPassword], itemForm[indexInputPassword]);
+            }
+        } else {
+            for (let i = 0; i < inputPassword.length; ++i) {
+                let indexInputPassword = [...inputForm].indexOf(inputPassword[i]);
+                addOrRemoveClass('_error', 'remove', informationError[indexInputPassword], itemForm[indexInputPassword]);
+            }
+        }
+    }
+    else {
         addOrRemoveClass('_error', 'remove', informationError[indexErrorInfo], itemForm[indexErrorInfo]);
     }
 }
