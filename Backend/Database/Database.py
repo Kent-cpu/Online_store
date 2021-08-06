@@ -1,5 +1,8 @@
 import sqlite3
-from Backend.SQLiteErrorCods import *
+# from Backend.SQLiteErrorCods impfrSQLiteErrorCods
+
+
+from SQLiteErrorCods import *
 
 
 class Database:
@@ -19,7 +22,8 @@ class Database:
 
     def add_table(self, sqlite_create_table_query):
         try:
-            database_connection = sqlite3.connect("Backend/Database/" + self.database_name)
+            database_connection = sqlite3.connect(
+                "Backend/Database/" + self.database_name)
             cursor = database_connection.cursor()
             cursor.execute(sqlite_create_table_query)
             database_connection.commit()
@@ -35,7 +39,8 @@ class Database:
 
     def add_data_to_table(self, data):
         try:
-            database_connection = sqlite3.connect("Backend/Database/" + self.database_name)
+            database_connection = sqlite3.connect(
+                "Backend/Database/" + self.database_name)
             cursor = database_connection.cursor()
             count_of_nickname = """SELECT * FROM Users WHERE nickname LIKE ?;"""
             cursor.execute(count_of_nickname, (data[0],))
@@ -71,10 +76,10 @@ class Database:
             print(error)
         return ERROR_COD
 
-
     def get_all_data(self):
         try:
-            database_connection = sqlite3.connect("Backend/Database/" + self.database_name)
+            database_connection = sqlite3.connect(
+                "Backend/Database/" + self.database_name)
             cursor = database_connection.cursor()
             sqlite_select_query = """SELECT * from Users"""
             cursor.execute(sqlite_select_query)
@@ -88,7 +93,8 @@ class Database:
 
     def clear_table(self, name):
         try:
-            database_connection = sqlite3.connect("Backend/Database/" + self.database_name)
+            database_connection = sqlite3.connect(
+                "Backend/Database/" + self.database_name)
             cursor = database_connection.cursor()
             cursor.execute("DELETE FROM Users;")
             database_connection.commit()

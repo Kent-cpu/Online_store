@@ -2,8 +2,10 @@ import threading
 
 from werkzeug.utils import redirect
 from Database.Database import Database
-from Backend.SQLiteErrorCods import *
+# from Backend.SQLiteErrorCods import *
 
+from SQLiteErrorCods import *
+from pathlib import Path
 from Utils import config_parser
 from flask import Flask, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -14,16 +16,19 @@ class Server:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.app = Flask(__name__, static_folder="C:\\Users\\Vemarus\\Unity\\Online_store\\Frontend\\static", template_folder="C:\\Users\\Vemarus\\Unity\\Online_store\\Frontend\\templates")
+        self.app = Flask(__name__, static_folder=str(Path(Path.cwd(), "Frontend", "static")),
+                         template_folder=str(Path(Path.cwd(), "Frontend", "templates")))
         self.database = Database("Users_database.db")
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.get_shop)
         self.app.add_url_rule('/shop', view_func=self.get_shop)
-        self.app.add_url_rule('/registration', methods=['POST', 'GET'], view_func=self.get_registration)
+        self.app.add_url_rule(
+            '/registration', methods=['POST', 'GET'], view_func=self.get_registration)
         self.app.add_url_rule('/clear-database', view_func=self.clear_database)
 
     def run_server(self):
-        self.server = threading.Thread(target=self.app.run(debug=True), kwargs={"host": self.host, "port": self.port})
+        self.server = threading.Thread(target=self.app.run(debug=True), kwargs={
+                                       "host": self.host, "port": self.port})
         self.server.start()
         return self.server
 
@@ -72,7 +77,7 @@ class Server:
 # parser.add_argument('--config', type=str, dest="config")
 # args = parser.parse_args()
 # config = config_parser(args.config)
-config = config_parser('C:\\Users\\Vemarus\\Unity\\Online_store\\Backend\\config.txt')
+config = config_parser(str(Path(Path.cwd(), "Backend", "config.txt")))
 server_host = config["SERVER_HOST"]
 server_port = int(config["SERVER_PORT"])
 server = Server(host=server_host, port=server_port)
