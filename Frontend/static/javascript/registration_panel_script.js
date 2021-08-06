@@ -4,12 +4,13 @@ const labelForm = document.querySelectorAll('.registration__form__item__label');
 const passwordButton = document.querySelectorAll('._icon-eye');
 const registrationButton = document.querySelector('.registration__form__item__submit');
 const informationError = document.querySelectorAll('.info-error');
-let correctData = false;
 
 
 itemForm.forEach((item) => {
     item.addEventListener('mousedown', (e) => {
-        e.preventDefault();
+        if (!e.target.classList.contains('registration__form__item__input')) {
+            e.preventDefault();
+        }
         let currentInput = item.querySelector('.registration__form__item__input');
         currentInput.focus();
     })
@@ -53,7 +54,7 @@ passwordButton.forEach((currentButton) => {
 
 registrationButton.addEventListener('click', (e) => {
     e.preventDefault();
-    correctData = Array.from(itemForm).every((element) => {
+    let correctData = Array.from(itemForm).every((element) => {
         return !element.classList.contains('_error');
     })
     if (correctData) {
@@ -80,7 +81,22 @@ function validate(input, indexErrorInfo) {
     } else if (input.classList.contains('_password') && !regularPassword.test(String(input.value))) {
         informationError[indexErrorInfo].innerHTML = "Wrong format";
         addOrRemoveClass('_error', 'add', informationError[indexErrorInfo], itemForm[indexErrorInfo]);
-    } else {
+    } else if (input.classList.contains('_password')) {
+        const inputPassword = document.querySelectorAll('._password');
+        if (inputPassword[0].value.length != 0 && inputPassword[1].value.length != 0 && inputPassword[0].value != inputPassword[1].value) {
+            for (let i = 0; i < inputPassword.length; ++i) {
+                let indexInputPassword = [...inputForm].indexOf(inputPassword[i]);
+                informationError[indexInputPassword].innerHTML = "Passwords don't match";
+                addOrRemoveClass('_error', 'add', informationError[indexInputPassword], itemForm[indexInputPassword]);
+            }
+        } else {
+            for (let i = 0; i < inputPassword.length; ++i) {
+                let indexInputPassword = [...inputForm].indexOf(inputPassword[i]);
+                addOrRemoveClass('_error', 'remove', informationError[indexInputPassword], itemForm[indexInputPassword]);
+            }
+        }
+    }
+    else {
         addOrRemoveClass('_error', 'remove', informationError[indexErrorInfo], itemForm[indexErrorInfo]);
     }
 }
@@ -96,34 +112,34 @@ function addOrRemoveClass(className, action, ...args) {
     }
 }
 
-function registration(){
-  const request = new XMLHttpRequest();
-  request.open('POST', '/registration');
-  data = new FormData();
-  nickname = document.getElementById("nickname").value;
-  email = document.getElementById("email").value;
-  password = document.getElementById("psw").value;
-  data.append('nickname', nickname);
-  data.append('email', email);
-  data.append('password', password);
-  request.onreadystatechange = function(){
-    if (request.readyState === 4 && request.status === 200){
-      answer = request.responseText;
-      if(answer === "1000"){
-         console.log("Correct");
-      } else if(answer.startsWith("1002:")){
-         answer = answer.substr(answer.indexOf(":") + 1)
-         index = answer.indexOf(";")
-         while(index != -1){
-           console.log(answer.slice(0,index))
-           answer = answer.substr(index + 1)
-           index = answer.indexOf(";")
-         }
-         console.log(request.responseText)
-      } else {
-         console.log("Error")
-      }
+function registration() {
+    const request = new XMLHttpRequest();
+    request.open('POST', '/registration');
+    data = new FormData();
+    nickname = document.getElementById("nickname").value;
+    email = document.getElementById("email").value;
+    password = document.getElementById("psw").value;
+    data.append('nickname', nickname);
+    data.append('email', email);
+    data.append('password', password);
+    request.onreadystatechange = function () {
+        if (request.readyState === 4 && request.status === 200) {
+            answer = request.responseText;
+            if (answer === "1000") {
+                console.log("Correct");
+            } else if (answer.startsWith("1002:")) {
+                answer = answer.substr(answer.indexOf(":") + 1)
+                index = answer.indexOf(";")
+                while (index != -1) {
+                    console.log(answer.slice(0, index))
+                    answer = answer.substr(index + 1)
+                    index = answer.indexOf(";")
+                }
+                console.log(request.responseText)
+            } else {
+                console.log("Error")
+            }
+        }
     }
-  }
-  request.send(data);
+    request.send(data);
 }
