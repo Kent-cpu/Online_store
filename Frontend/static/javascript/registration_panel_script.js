@@ -113,22 +113,22 @@ function addOrRemoveClass(className, action, ...args) {
 }
 
 function registration() {
-    const request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();  // Получение объетка запроса
     request.open('POST', '/registration');
-    data = new FormData();
+    data = new FormData();  // Хранилище для данных
     nickname = document.getElementById("nickname").value;
     email = document.getElementById("email").value;
     password = document.getElementById("psw").value;
     data.append('nickname', nickname);
     data.append('email', email);
     data.append('password', password);
-    request.onreadystatechange = function () {
-        if (request.readyState === 4 && request.status === 200) {
-            answer = request.responseText;
-            if (answer === "1000") {
+    request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
+        if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
+            answer = request.responseText;  // Получение переданных данных в виде строки
+            if (answer === "1000") {  // УСпешно
                 console.log("Correct");
-            } else if (answer.startsWith("1002:")) {
-                answer = answer.substr(answer.indexOf(":") + 1)
+            } else if (answer.startsWith("1002:")) { // Ошибка Уникальности
+                answer = answer.substr(answer.indexOf(":") + 1)  // Парсим, нужно переделать
                 index = answer.indexOf(";")
                 while (index != -1) {
                     console.log(answer.slice(0, index))
@@ -136,10 +136,10 @@ function registration() {
                     index = answer.indexOf(";")
                 }
                 console.log(request.responseText)
-            } else {
+            } else {  // Ошибка
                 console.log("Error")
             }
         }
     }
-    request.send(data);
+    request.send(data);  // Отправка данных
 }

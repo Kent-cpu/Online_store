@@ -1,8 +1,7 @@
 import json
-import os
 import threading
 
-from Database.Database import Database
+from Backend.Database.Database import Database
 from Backend.SQLiteErrorCods import *
 from Backend.ConstantStorage import *
 
@@ -16,13 +15,15 @@ class Server:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.app = Flask(__name__, static_folder="C:\\Users\\Vemarus\\Unity\\Online_store2\\Frontend\\static", template_folder="C:\\Users\\Vemarus\\Unity\\Online_store2\\Frontend\\templates")
+        self.app = Flask(__name__, static_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "static").resolve()),
+                         template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
         self.database = Database("Users_database.db")
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)  # Описывает действия при открытие ссылки
         self.app.add_url_rule('/', view_func=self.get_shop)
         self.app.add_url_rule('/shop', view_func=self.get_shop)
         self.app.add_url_rule(
-            '/registration', methods=['POST', 'GET'], view_func=self.get_registration)  # Описывает действия при открытие ссылки + разрешенные методы
+            '/registration', methods=['POST', 'GET'],
+            view_func=self.get_registration)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/clear-database', view_func=self.clear_database)
 
     # Запуск сервера
@@ -39,61 +40,30 @@ class Server:
             terminate_func()
         return "shutdown"
 
-    def shutdown_server_button(self):
-        request.get(f'http://{self.host}:{self.port}/shutdown')
-
     def get_shop(self):
-        return render_template("main.html")
+        return render_template("main.html")  # Отобразить данную страницу
 
     def get_registration(self):
-        if request.method == "POST":
+        if request.method == "POST":  # Если пришли данные методом POST
             try:
                 data = request.get(DATA_FROM_SERVER)  # Получение данных формы регистрации
                 data = json.loads(data.text)  # Перевод данных из JSON
                 if data is dict:
                     if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
-                        database_answer = self.registration(data)
-                        code = database_answer[0]
-                        text = database_answer[1]
-                        if code == OK_CODE:
-                            answer = {
-                                REQUEST_TYPE: OK_CODE_ANSWER,
-                                CODE_ANSWER: code,
-                                TEXT_ANSWER: text
-                            }
-                        else:
-                            answer = {
-                                REQUEST_TYPE: ERROR_CODE_ANSWER,
-                                CODE_ANSWER: code,
-                                TEXT_ANSWER: text
-                            }
-                        return json.dumps(answer)
+                        return json.dumps(self.response_forming(self.registration(data)))  # Упаковка ответа от БД и конвертация в JSON
                     elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:  # Тип проверки уникальности имени или почты
                         if data[REQUEST_TYPE] == EMAIL:
-                            database_answer = self.database.check_for_uniqueness(EMAIL, data[KEY])
+                            return json.dumps(self.response_forming(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER])))  # Упаковка ответа от БД и конвертация в JSON
                         else:
-                            database_answer = self.database.check_for_uniqueness(NICKNAME, data[KEY])
-                        code = database_answer[0]
-                        text = database_answer[1]
-                        if code == OK_CODE:
-                            answer = {
-                                REQUEST_TYPE: OK_CODE_ANSWER,
-                                CODE_ANSWER: code,
-                                TEXT_ANSWER: text
-                            }
-                        else:
-                            answer = {
-                                REQUEST_TYPE: ERROR_CODE_ANSWER,
-                                CODE_ANSWER: code,
-                                TEXT_ANSWER: text
-                            }
-                        return json.dumps(answer)
+                            return json.dumps(self.response_forming(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))  # Упаковка ответа от БД и конвертация в JSON
+
                 return str(ERROR_CODE)
             finally:
                 return str(ERROR_CODE)
         else:
             return render_template("registration_panel.html")
 
+    # Очистка базы данных
     def clear_database(self):
         self.database.clear_table("Users")
         return redirect("/")
@@ -103,15 +73,36 @@ class Server:
         try:
             # session["userLogged"] = data[NICKNAME]
             data = (data[NICKNAME], data[EMAIL], data[PASSWORD])
-            answer = self.database.add_data_to_table(data)
-            if answer[0] == OK_CODE:
-                return str(OK_CODE)
-            elif answer[0] == UNIQUE_FIELD_ERROR_CODE:
-                return f"{str(UNIQUE_FIELD_ERROR_CODE)}:{answer[1]}"
-            else:
-                return str(ERROR_CODE)
+            database_answer = self.database.add_data_to_table(data)
+            if database_answer[0] == OK_CODE or database_answer[0] == ERROR_CODE:
+                return database_answer
+            elif database_answer[0] == UNIQUE_FIELD_ERROR_CODE:
+                return [UNIQUE_FIELD_ERROR_CODE, database_answer[1].split(";")]
         finally:
-            return str(ERROR_CODE)
+            return [ERROR_CODE, get_code_info(ERROR_CODE)]
+
+    # Формирование ответа серверу JSON
+    def response_forming(self, database_answer):
+        code = database_answer[0]
+        if code == UNIQUE_FIELD_ERROR_CODE:  # Если ошибка уникальности, то возвращаем: тип, код, массив совпавших значений
+            values = database_answer[1]
+            answer = {
+                REQUEST_TYPE: ERROR_CODE_ANSWER,
+                CODE_ANSWER: code,
+                VALUE_ANSWER: values
+            }
+        else:  # Иначе возвращаем: тип, код, текст
+            text = database_answer[1]
+            if code == OK_CODE:
+                my_type = OK_CODE_ANSWER
+            else:
+                my_type = ERROR_CODE_ANSWER
+            answer = {
+                REQUEST_TYPE: my_type,
+                CODE_ANSWER: code,
+                TEXT_ANSWER: text
+            }
+        return answer
 
 
 if __name__ == '__main__':

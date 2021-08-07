@@ -3,9 +3,6 @@ from Backend.SQLiteErrorCods import *
 from Backend.ConstantStorage import *
 
 
-
-
-
 class Database:
 
     def __init__(self, database_name):
@@ -23,8 +20,8 @@ class Database:
 
     def connect_db(self):
         connect = sqlite3.connect(
-                "Backend/Database/" + self.database_name)
-        #connect.row_factory = sqlite3.Row
+            "Backend/Database/" + self.database_name)
+        # connect.row_factory = sqlite3.Row
         return connect
 
     def add_table(self, sqlite_create_table_query):
@@ -86,7 +83,7 @@ class Database:
             elif str(error) == "UNIQUE constraint failed: Users.nickname":
                 return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME}"]
             else:
-                return ERROR_CODE
+                return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     def get_all_data(self):
         try:
