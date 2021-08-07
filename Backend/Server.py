@@ -87,7 +87,7 @@ class Server:
         if code == UNIQUE_FIELD_ERROR_CODE:  # Если ошибка уникальности, то возвращаем: тип, код, массив совпавших значений
             values = database_answer[1]
             answer = {
-                REQUEST_TYPE: UNIQUE_FIELD_ERROR_CODE,
+                REQUEST_TYPE: ERROR_CODE_ANSWER,
                 CODE_ANSWER: code,
                 VALUE_ANSWER: values
             }
