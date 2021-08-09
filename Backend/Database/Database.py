@@ -42,15 +42,17 @@ class Database:
         try:
             database_connection = self.connect_db()
             cursor = database_connection.cursor()
-            count = """SELECT * FROM Users WHERE ? LIKE ?;"""
-            cursor.execute(count, (key, value,))
+            if key == NICKNAME:
+                count = """SELECT * FROM Users WHERE nickname LIKE ?;"""
+            else:
+                count = """SELECT * FROM Users WHERE email LIKE ?;"""
+            cursor.execute(count, (value,))
             count = len(cursor.fetchall())
             if database_connection:
                 database_connection.close()
             if count > 0:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{key};"]
             else:
-                print(get_code_info(OK_CODE))
                 return [OK_CODE, get_code_info(OK_CODE)]
         except Exception:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
@@ -59,14 +61,14 @@ class Database:
         try:
             database_connection = self.connect_db()
             cursor = database_connection.cursor()
-            count_of_nickname = """SELECT * FROM Users WHERE ? LIKE ?;"""
-            cursor.execute(count_of_nickname, (NICKNAME, data[0],))
+            count_of_nickname = """SELECT * FROM Users WHERE nickname LIKE ?;"""
+            cursor.execute(count_of_nickname, (data[0],))
             count_of_nickname = len(cursor.fetchall())
-            count_of_email = """SELECT * FROM Users WHERE ? LIKE ?;"""
-            cursor.execute(count_of_email, (EMAIL, data[1],))
+            count_of_email = """SELECT * FROM Users WHERE email LIKE ?;"""
+            cursor.execute(count_of_email, (data[1],))
             count_of_email = len(cursor.fetchall())
             if count_of_nickname > 0 and count_of_email > 0:
-                return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME};{EMAIL};"]
+                return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME};{EMAIL}"]
             elif count_of_nickname > 0:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME};"]
             elif count_of_email > 0:

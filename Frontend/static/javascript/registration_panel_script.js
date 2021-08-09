@@ -145,10 +145,7 @@ function registration() {
         email: document.getElementById("email").value,
         password: document.getElementById("psw").value,
     }
-    let a = JSON.stringify(result)
-    console.log(result)
-    console.log(a)
-    request.send(a);  // Отправка данных
+    request.send(JSON.stringify(result));  // Отправка данных
 
     request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
         if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера

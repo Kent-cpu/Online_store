@@ -48,7 +48,6 @@ class Server:
         if request.method == "POST":  # Если пришли данные методом POST
             # Получение данных формы регистрации
             data = request.json
-            print(data)
             try:
                 if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
                     # Упаковка ответа от БД и конвертация в JSON
