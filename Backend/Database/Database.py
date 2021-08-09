@@ -1,19 +1,15 @@
-import sys
-sys.path.append("..")
 from Backend.ConstantStorage import *
 from Backend.SQLiteErrorCods import *
 import sqlite3
 
 
-
 class Database:
 
-    def __init__(self, database_name):
+    def __init__(self):
         self.sqlite_insert_with_param = """INSERT INTO Users
                                                               (nickname, email, password)
                                                               VALUES
                                                               (?, ?, ?);"""
-        self.database_name = "Users_database.db"
         # database_users_table = '''CREATE TABLE Users (
         #                                        id INTEGER PRIMARY KEY,
         #                                        nickname text NOT NULL UNIQUE,
@@ -22,7 +18,7 @@ class Database:
         # self.database.add_table(database_users_table)
 
     def connect_db(self):
-        connect = sqlite3.connect("C:\\Users\\rusla\\Desktop\\Work Folder\\Blog_work\\Backend\\Database\\Users_database.db")
+        connect = sqlite3.connect(DATABASE_PATH)
         # connect.row_factory = sqlite3.Row
         return connect
 
@@ -43,17 +39,21 @@ class Database:
         return OK_CODE
 
     def check_for_uniqueness(self, key, value):
-        database_connection = self.connect_db()
-        cursor = database_connection.cursor()
-        count = """SELECT * FROM Users WHERE ? LIKE ?;"""
-        cursor.execute(count, (key, value,))
-        count = len(cursor.fetchall())
-        if database_connection:
-            database_connection.close()
-        if count > 0:
-            return [UNIQUE_FIELD_ERROR_CODE, f"{key};"]
-        else:
-            return [OK_CODE, get_code_info(OK_CODE)]
+        try:
+            database_connection = self.connect_db()
+            cursor = database_connection.cursor()
+            count = """SELECT * FROM Users WHERE ? LIKE ?;"""
+            cursor.execute(count, (key, value,))
+            count = len(cursor.fetchall())
+            if database_connection:
+                database_connection.close()
+            if count > 0:
+                return [UNIQUE_FIELD_ERROR_CODE, f"{key};"]
+            else:
+                print(get_code_info(OK_CODE))
+                return [OK_CODE, get_code_info(OK_CODE)]
+        except Exception:
+            return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     def add_data_to_table(self, data):
         try:
@@ -89,8 +89,7 @@ class Database:
 
     def get_all_data(self):
         try:
-            database_connection = sqlite3.connect(
-                "Backend/Database/" + self.database_name)
+            database_connection = self.connect_db()
             cursor = database_connection.cursor()
             sqlite_select_query = """SELECT * from Users"""
             cursor.execute(sqlite_select_query)

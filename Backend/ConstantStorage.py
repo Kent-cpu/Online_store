@@ -1,8 +1,9 @@
 from typing import Final
+from pathlib import Path
 
 SERVER_HOST = "192.168.100.20"  # Хост сервера
 SERVER_PORT = "5005"  # Порт сервера
-DATABASE_PATH: Final = "Backend/Database/Users_database.db"  # Путь до базы данных
+DATABASE_PATH: Final = str((Path(Path.cwd())/"Database"/"Users_database.db").resolve())  # Путь до базы данных
 REQUEST_TYPE: Final = "type"  # Ключ к словарю для типа переданных данных
 OK_CODE_ANSWER: Final = "OK_CODE"  # Значение по ключу REQUEST_TYPE
 ERROR_CODE_ANSWER: Final = "ERROR_CODE"  # Значение по ключу REQUEST_TYPE

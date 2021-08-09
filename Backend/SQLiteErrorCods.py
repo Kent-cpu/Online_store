@@ -8,6 +8,8 @@ CODE_DICT: Final = {OK_CODE: "OK", ERROR_CODE: "Error", UNIQUE_FIELD_ERROR_CODE:
 
 def get_code_info(code):
     try:
-        return CODE_DICT.get(code["ERROR"])
-    finally:
+        print(code)
+        print(CODE_DICT.get(code))
+        return CODE_DICT.get(code)
+    except KeyError:
         return "ERROR"

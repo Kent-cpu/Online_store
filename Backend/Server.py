@@ -17,7 +17,7 @@ class Server:
         self.port = port
         self.app = Flask(__name__, static_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "static").resolve()),
                          template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
-        self.database = Database("Users_database.db")
+        self.database = Database()
         # Описывает действия при открытие ссылки
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.get_shop)
@@ -48,7 +48,8 @@ class Server:
         if request.method == "POST":  # Если пришли данные методом POST
             # Получение данных формы регистрации
             data = request.json
-            if True:
+            print(data)
+            try:
                 if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
                     # Упаковка ответа от БД и конвертация в JSON
                     return json.dumps(self.response_forming(self.registration(data)))
@@ -60,6 +61,8 @@ class Server:
                         # Упаковка ответа от БД и конвертация в JSON
                         return json.dumps(self.response_forming(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
                 return str(ERROR_CODE)
+            except Exception:
+                return [ERROR_CODE, get_code_info(ERROR_CODE)]
         else:
             return render_template("registration_panel.html")
 
@@ -78,7 +81,7 @@ class Server:
                 return database_answer
             elif database_answer[0] == UNIQUE_FIELD_ERROR_CODE:
                 return [UNIQUE_FIELD_ERROR_CODE, database_answer[1].split(";")]
-        finally:
+        except Exception:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     # Формирование ответа серверу JSON

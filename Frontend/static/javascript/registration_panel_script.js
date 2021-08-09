@@ -4,11 +4,11 @@ const labelForm = document.querySelectorAll('.registration__form__item__label');
 const passwordButton = document.querySelectorAll('._icon-eye');
 const registrationButton = document.querySelector('.registration__form__item__submit');
 const informationError = document.querySelectorAll('.info-error');
-let date = {
+let data = {
     type: "",
     text: "",
 };
-let dateJson = "";
+let dataJson = "";
 
 itemForm.forEach((item) => {
     item.addEventListener('mousedown', (e) => {
@@ -42,8 +42,8 @@ inputForm.forEach((item) => {
         request.open('POST', '/registration');
         request.setRequestHeader("Content-Type", "application/json");
         if (item.classList.contains('_email')) {
-            date["type"] = "email";
-            date["text"] = String(item.value);
+            data["type"] = "email";
+            data["text"] = String(item.value);
         }
 
         request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
@@ -52,8 +52,8 @@ inputForm.forEach((item) => {
                 console.log(answer)
             }
         }
-        dateJson = JSON.stringify(date);
-        request.send(dateJson);
+        dataJson = JSON.stringify(data);
+        request.send(dataJson);
     });
 })
 
@@ -138,17 +138,22 @@ function addOrRemoveClass(className, action, ...args) {
 function registration() {
     const request = new XMLHttpRequest();  // Получение объетка запроса
     request.open('POST', '/registration');
+    request.setRequestHeader("Content-Type", "application/json");
     let result = {
         type: "registration",
         nickname: document.getElementById("nickname").value,
         email: document.getElementById("email").value,
         password: document.getElementById("psw").value,
     }
-
+    let a = JSON.stringify(result)
+    console.log(result)
+    console.log(a)
+    request.send(a);  // Отправка данных
 
     request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
         if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
             answer = request.responseText;  // Получение переданных данных в виде строки
+            console.log(answer)
             if (answer === "1000") {  // УСпешно
                 console.log("Correct");
             } else if (answer.startsWith("1002:")) { // Ошибка Уникальности
@@ -165,5 +170,4 @@ function registration() {
             }
         }
     }
-    request.send(JSON.stringify(result));  // Отправка данных
 }
