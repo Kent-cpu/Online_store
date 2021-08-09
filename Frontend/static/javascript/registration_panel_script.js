@@ -4,7 +4,11 @@ const labelForm = document.querySelectorAll('.registration__form__item__label');
 const passwordButton = document.querySelectorAll('._icon-eye');
 const registrationButton = document.querySelector('.registration__form__item__submit');
 const informationError = document.querySelectorAll('.info-error');
-
+let date = {
+    type: "",
+    text: "",
+};
+let dateJson = "";
 
 itemForm.forEach((item) => {
     item.addEventListener('mousedown', (e) => {
@@ -32,6 +36,25 @@ inputForm.forEach((item) => {
         item.closest('.registration__form__item').querySelector('.registration__form__item__label').classList.add('_active');
         addOrRemoveClass('_error', 'remove', item, informationError[indexInputForm]);
     })
+
+    item.addEventListener('keyup', (e) => {
+        const request = new XMLHttpRequest();  // Получение объетка запроса
+        request.open('POST', '/registration');
+        request.setRequestHeader("Content-Type", "application/json");
+        if (item.classList.contains('_email')) {
+            date["type"] = "email";
+            date["text"] = String(item.value);
+        }
+
+        request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
+            if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
+                answer = request.responseText;  // Получение переданных данных в виде строки
+                console.log(answer)
+            }
+        }
+        dateJson = JSON.stringify(date);
+        request.send(dateJson);
+    });
 })
 
 
@@ -115,13 +138,14 @@ function addOrRemoveClass(className, action, ...args) {
 function registration() {
     const request = new XMLHttpRequest();  // Получение объетка запроса
     request.open('POST', '/registration');
-    data = new FormData();  // Хранилище для данных
-    nickname = document.getElementById("nickname").value;
-    email = document.getElementById("email").value;
-    password = document.getElementById("psw").value;
-    data.append('nickname', nickname);
-    data.append('email', email);
-    data.append('password', password);
+    let result = {
+        type: "registration",
+        nickname: document.getElementById("nickname").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("psw").value,
+    }
+
+
     request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
         if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
             answer = request.responseText;  // Получение переданных данных в виде строки
@@ -141,5 +165,5 @@ function registration() {
             }
         }
     }
-    request.send(data);  // Отправка данных
+    request.send(JSON.stringify(result));  // Отправка данных
 }

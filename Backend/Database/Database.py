@@ -1,6 +1,9 @@
-import sqlite3
-from Backend.SQLiteErrorCods import *
+import sys
+sys.path.append("..")
 from Backend.ConstantStorage import *
+from Backend.SQLiteErrorCods import *
+import sqlite3
+
 
 
 class Database:
@@ -19,8 +22,7 @@ class Database:
         # self.database.add_table(database_users_table)
 
     def connect_db(self):
-        connect = sqlite3.connect(
-            "Backend/Database/" + self.database_name)
+        connect = sqlite3.connect("C:\\Users\\rusla\\Desktop\\Work Folder\\Blog_work\\Backend\\Database\\Users_database.db")
         # connect.row_factory = sqlite3.Row
         return connect
 

@@ -1,9 +1,9 @@
 import json
 import threading
 
-from Backend.Database.Database import Database
-from Backend.SQLiteErrorCods import *
-from Backend.ConstantStorage import *
+from Database.Database import Database
+from SQLiteErrorCods import *
+from ConstantStorage import *
 
 from flask import Flask, request, render_template, jsonify, flash, session, redirect, url_for
 from pathlib import Path
@@ -18,7 +18,8 @@ class Server:
         self.app = Flask(__name__, static_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "static").resolve()),
                          template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
         self.database = Database("Users_database.db")
-        self.app.add_url_rule('/shutdown', view_func=self.shutdown)  # Описывает действия при открытие ссылки
+        # Описывает действия при открытие ссылки
+        self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.get_shop)
         self.app.add_url_rule('/shop', view_func=self.get_shop)
         self.app.add_url_rule(
@@ -45,20 +46,19 @@ class Server:
 
     def get_registration(self):
         if request.method == "POST":  # Если пришли данные методом POST
-            try:
-                data = request.get(DATA_FROM_SERVER)  # Получение данных формы регистрации
-                data = json.loads(data.text)  # Перевод данных из JSON
-                if data is dict:
-                    if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
-                        return json.dumps(self.response_forming(self.registration(data)))  # Упаковка ответа от БД и конвертация в JSON
-                    elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:  # Тип проверки уникальности имени или почты
-                        if data[REQUEST_TYPE] == EMAIL:
-                            return json.dumps(self.response_forming(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER])))  # Упаковка ответа от БД и конвертация в JSON
-                        else:
-                            return json.dumps(self.response_forming(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))  # Упаковка ответа от БД и конвертация в JSON
-
-                return str(ERROR_CODE)
-            finally:
+            # Получение данных формы регистрации
+            data = request.json
+            if True:
+                if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
+                    # Упаковка ответа от БД и конвертация в JSON
+                    return json.dumps(self.response_forming(self.registration(data)))
+                # Тип проверки уникальности имени или почты
+                elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:
+                    if data[REQUEST_TYPE] == EMAIL:
+                        return json.dumps(self.response_forming(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER])))
+                    else:
+                        # Упаковка ответа от БД и конвертация в JSON
+                        return json.dumps(self.response_forming(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
                 return str(ERROR_CODE)
         else:
             return render_template("registration_panel.html")
