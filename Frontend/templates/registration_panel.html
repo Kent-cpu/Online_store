@@ -16,10 +16,8 @@
                 <h1 class = "registration__title">Registration</h1>
                 <form class="registration__form">
                     <div class="registration__form__item">
-                        <label  class = "registration__form__item__label">
-<!--                                for="nickname">-->
-                            Nickname *</label>
-                        <input autocomplete = "off" class = "registration__form__item__input required" type="text" name = "nickname" id = "nickname">
+                        <label  class = "registration__form__item__label">Nickname *</label>
+                        <input autocomplete = "off" class = "registration__form__item__input required _nickname" type="text" name = "nickname" id = "nickname">
                         <div class="registration__form__item__control">
                             <p href="#!" class = "_icon-info">
                                 <span class = "info_password">The nickname must contain at least 5 characters.</span>
@@ -28,19 +26,15 @@
                     </div>
                     <p class = "info-error">Plug</p>
                     <div class="registration__form__item">
-                        <label class = "registration__form__item__label">
-<!--                               for="email"-->
-                        Email *</label>
+                        <label class = "registration__form__item__label">Email *</label>
                         <input autocomplete = "off" class = "registration__form__item__input _email required" type="text"  name = "email" id = "email">
                     </div>
                     <p class = "info-error">Plug</p>
                     <div class="registration__form__item">
-                        <label class = "registration__form__item__label">
-<!--                            for="password">-->
-                            Password *</label>
+                        <label class = "registration__form__item__label">Password *</label>
                         <input autocomplete = "off" class = "registration__form__item__input _password required" type="password" name = "psw" id = "psw">
                         <div class="registration__form__item__control">
-                            <p href="#!" class = "_icon-eye" ></p>
+                            <p href="#!" class = "showHidePasswordBtn _icon-eye" ></p>
                             <p href="#!" class = "_icon-info" >
                                 <span class = "info_password">Password must be 8 characters long, contain at least one number, one upper and one lowercase letter.</span>
                             </p>
@@ -48,12 +42,10 @@
                     </div>
                     <p class = "info-error">Plug</p>
                     <div class="registration__form__item">
-                        <label class = "registration__form__item__label">
-<!--                            for="psw-repeat"-->
-                            Repeat Password *</label>
+                        <label class = "registration__form__item__label">Repeat Password *</label>
                         <input autocomplete = "off" class = "registration__form__item__input _password required" type="password"  name = "psw-repeat" id = "psw-repeat">
                         <div class="registration__form__item__control">
-                            <p href="#!" class = "_icon-eye"></p>
+                            <p href="#!" class = "showHidePasswordBtn _icon-eye"></p>
                             <p href="#!" class = "_icon-info">
                                 <span class = "info_password">Password must be 8 characters long, contain at least one number, one upper and one lowercase letter.</span>
                             </p>

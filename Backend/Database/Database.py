@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from Backend.ConstantStorage import *
 from Backend.SQLiteErrorCods import *
 import sqlite3
