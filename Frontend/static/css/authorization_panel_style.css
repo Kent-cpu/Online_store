@@ -1,0 +1,253 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Roboto:wght@400;500&display=swap");
+@font-face {
+  font-family: 'icons';
+  src: url("../fonts/icons.eot?uelfqt");
+  src: url("../fonts/icons.eot?uelfqt#iefix") format("embedded-opentype"), url("../fonts/icons.ttf?uelfqt") format("truetype"), url("../fonts/icons.woff?uelfqt") format("woff"), url("../fonts/icons.svg?uelfqt#icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="_icon-"]::before, [class*=" _icon-"]::before {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icons' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+._icon-eye:before {
+  content: "\e9ce";
+}
+
+._icon-eye-blocked:before {
+  content: "\e9d1";
+}
+
+html {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto";
+  font-size: 16px;
+  background-color: #519cf8;
+}
+
+.authorization {
+  height: 100vh;
+  position: relative;
+}
+
+.authorization__body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  min-width: 450px;
+  background-color: #d8e3fe;
+  padding: 50px;
+}
+
+.authorization__title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 30px;
+  font-family: "Quicksand";
+  font-weight: 700;
+}
+
+.authorization__form__item {
+  position: relative;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1.5px solid #eee;
+  -webkit-transition: all .2s linear;
+  -o-transition: all .2s linear;
+  transition: all .2s linear;
+}
+
+.authorization__form__item:focus-within {
+  border-color: #3A79FF;
+}
+
+.authorization__form__item__input {
+  width: 75%;
+  padding: 20px;
+  border: 0;
+}
+
+.authorization__form__item__control {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.authorization__form__item__control ._icon-eye, .authorization__form__item__control ._icon-eye-blocked {
+  cursor: pointer;
+  -webkit-transition: all 0.1s linear;
+  -o-transition: all 0.1s linear;
+  transition: all 0.1s linear;
+  padding: 5px;
+  font-size: 24px;
+}
+
+.authorization__form__item__control ._icon-eye:hover, .authorization__form__item__control ._icon-eye-blocked:hover {
+  background-color: #9fbfff;
+  border-radius: 5px;
+}
+
+.authorization__form__item__control ._icon-eye:hover .info_password, .authorization__form__item__control ._icon-eye-blocked:hover .info_password {
+  visibility: visible;
+  opacity: 1;
+}
+
+.authorization__form__item__label {
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  left: 3%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  font-weight: 500;
+  font-size: 14px;
+  -webkit-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+  transition: all 0.1s ease;
+}
+
+.authorization__form__item__label._active {
+  top: 10%;
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  font-size: 12px;
+}
+
+.authorization__form__item__submit {
+  font-size: 18px;
+  background-color: #15c441;
+  border: 0;
+  width: 100%;
+  padding: 10px 0px;
+}
+
+.authorization__form__item__submit:hover {
+  background-color: #13ad39;
+}
+
+.authorization__form ._error {
+  border-color: #f30000;
+}
+
+.authorization__form ._error:focus-within {
+  border-color: #3A79FF;
+}
+
+.authorization .info-error {
+  visibility: hidden;
+  opacity: 0;
+  color: #f30000;
+  position: relative;
+  top: -10px;
+}
+
+.authorization .info-error._error {
+  visibility: visible;
+  opacity: 1;
+}
+
+.customCheckboxRemember {
+  cursor: pointer;
+}
+
+.checkRemeber {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.checkRemeber:not(:disabled):not(:checked) + span:hover::before {
+  border-color: #b3d7ff;
+}
+
+.checkRemeber:not(:disabled):active + span::before {
+  background-color: #b3d7ff;
+  border-color: #b3d7ff;
+}
+
+.checkRemeber:focus + span::before {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.checkRemeber:focus:not(:checked) + span::before {
+  border-color: #80bdff;
+}
+
+.checkRemeber:checked + span::before {
+  border-color: #0b76ef;
+  background-color: #0b76ef;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.checkRemember_text {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-bottom: 25px;
+  font-size: 18px;
+}
+
+.checkRemember_text::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  border: 2px solid #adb5bd;
+  border-radius: 0.25em;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}

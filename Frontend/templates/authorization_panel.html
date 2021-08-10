@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Authorization page">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/authorization_panel_style.css')}}">
+    <title>Authorization</title>
+</head>
+<body>
+    <div class="authorization">
+        <div class="authorization__wrapper">
+            <div class="authorization__body">
+                <h1 class = "authorization__title">Authorization</h1>
+                <form class="authorization__form">
+                    <div class="authorization__form__item">
+                        <label  class = "authorization__form__item__label">Email</label>
+                        <input autocomplete = "off" class = "authorization__form__item__input required _email" type="text" name = "email_email" id = "email_email">
+                    </div>
+                    <p class = "info-error">Plug</p>
+                    <div class="authorization__form__item">
+                        <label class = "authorization__form__item__label">Password</label>
+                        <input autocomplete = "off" class = "authorization__form__item__input _password required" type="password"  name = "pass_password" id = "pass_password">
+                        <div class="authorization__form__item__control">
+                            <p href="#!" class = "showHidePasswordBtn _icon-eye"></p>
+                        </div>
+                    </div>
+                    <p class = "info-error">Plug</p>
+                    <label class = "customCheckboxRemember">
+                        <input class = "checkRemeber" type="checkbox" >
+                        <span class="checkRemember_text">Запомнить меня</span>
+                    </label>
+                   
+                    <button class="authorization__form__item__submit disabled" type="submit">Login Right Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src = "../static/javascript/authorization_panel_script.js"></script>
+</body>
+</html>

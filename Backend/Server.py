@@ -25,6 +25,7 @@ class Server:
         self.app.add_url_rule(
             '/registration', methods=['POST', 'GET'],
             view_func=self.get_registration)  # Описывает действия при открытие ссылки + разрешенные методы
+        self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.get_authorization) 
         self.app.add_url_rule('/clear-database', view_func=self.clear_database)
 
     # Запуск сервера
@@ -64,6 +65,9 @@ class Server:
                 return [ERROR_CODE, get_code_info(ERROR_CODE)]
         else:
             return render_template("registration_panel.html")
+
+    def get_authorization(self):
+        return render_template("authorization_panel.html")
 
     # Очистка базы данных
     def clear_database(self):

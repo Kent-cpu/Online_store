@@ -402,7 +402,7 @@ h5 {
 
 .section-features {
   padding: 141px 0px;
-  background: url_for('static', filename='img/clouds.svg') no-repeat center center;
+  /* background: url_for('static', filename='img/clouds.svg') no-repeat center center; */
 }
 
 .section-features__title {
@@ -424,7 +424,6 @@ h5 {
 .section-features__content {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (1fr)[4];
   grid-template-columns: repeat(4, 1fr);
   margin-bottom: 117px;
   grid-column-gap: 67px;
@@ -600,9 +599,7 @@ h5 {
 .slider-blog__item-gallery {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (120px)[3];
   grid-template-columns: repeat(3, 120px);
-  -ms-grid-rows: (126px)[2];
   grid-template-rows: repeat(2, 126px);
   grid-gap: 12px;
   margin-right: 10%;
