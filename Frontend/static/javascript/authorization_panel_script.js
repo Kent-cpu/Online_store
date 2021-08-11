@@ -48,7 +48,6 @@ document.querySelectorAll(".showHidePasswordBtn").forEach((currentButton) => { /
 
 document.querySelector(".authorization__form__item__submit").addEventListener("click", e => {
     e.preventDefault();
-    checkingForUniquenessData();
     let correctData = Array.from(itemForm).every(inputField => {
         return !inputField.classList.contains("_error") && inputField.querySelector(".authorization__form__item__input").value.length > 0;
     });
@@ -71,38 +70,6 @@ function validate(input, indexErrorInfo) {
     }
 }
 
-function checkingForUniquenessData() {
-    const request = new XMLHttpRequest();  // Получение объетка запроса
-    request.open("POST", "/authorization");
-    request.setRequestHeader("Content-Type", "application/json");
-
-    let data = {
-        type: "authorization",
-        email: inputForm[0].value,
-        password: inputForm[1].value,
-        remember_me: document.querySelector('.checkRemeber').checked, // Проверка checkbox "Запомнить меня" true/false
-    }
-
-    request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции authorization()
-        if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
-            answer = JSON.parse(request.responseText);
-            if (answer["type"] === "ERROR_CODE") {
-                console.log("Ошибка");
-                itemForm.forEach((element, index) => {
-                    informationError[index].innerHTML = "The data you used to sign in is invalid."
-                    addOrRemoveClass("_error", "remove", element, informationError[index]);
-                });
-            } else {
-                itemForm.forEach((element, index) => {
-                    addOrRemoveClass("_error", "remove", element, informationError[index]);
-                });
-            }
-        }
-    }
-    request.send(JSON.stringify(data));
-}
-
-
 function addOrRemoveClass(className, action, ...args) {
     for (let i = 0; i < args.length; ++i) {
         if (action === "add") {
@@ -119,8 +86,8 @@ function authorization() {
     request.setRequestHeader("Content-Type", "application/json");
     let data = {
         type: "authorization",
-        email: document.getElementById("email").value,
-        password: document.getElementById("psw").value,
+        email:  inputForm[0].value,
+        password: inputForm[1].value,
         remember_me: document.querySelector('.checkRemeber').checked,
     }
     request.send(JSON.stringify(data));  // Отправка данных

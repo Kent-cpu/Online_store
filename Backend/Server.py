@@ -1,11 +1,16 @@
 import json
+import os
 import threading
+
+import werkzeug.security
 
 from Database.Database import Database
 from SQLiteErrorCods import *
 from ConstantStorage import *
+from Backend.User.UserLogin import UserLogin
 
-from flask import Flask, request, render_template, jsonify, flash, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for, g, make_response
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
 
 
@@ -17,16 +22,28 @@ class Server:
         self.port = port
         self.app = Flask(__name__, static_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "static").resolve()),
                          template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
-        self.database = Database()
+        self.login_manager = LoginManager(self.app)
+        self.app.config["SECRET_KEY"] = "wefwefnuwi.owej88943rhjnfw.wefweiof.j9348hjfhjew"
+        self.database = Database(os.path.join(self.app.root_path, "Database\\Users_database.db"))
         # Описывает действия при открытие ссылки
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
-        self.app.add_url_rule('/', view_func=self.get_shop)
-        self.app.add_url_rule('/shop', view_func=self.get_shop)
-        self.app.add_url_rule(
-            '/registration', methods=['POST', 'GET'],
-            view_func=self.get_registration)  # Описывает действия при открытие ссылки + разрешенные методы
-        self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.get_authorization) 
-        self.app.add_url_rule('/clear-database', view_func=self.clear_database)
+        self.app.add_url_rule('/', view_func=self.shop_page)
+        self.app.add_url_rule('/shop', view_func=self.shop_page)
+        self.app.add_url_rule('/logout', view_func=self.logout)
+        self.app.add_url_rule('/registration', methods=['POST', 'GET'], view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
+        self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
+
+        @self.app.before_request
+        def before_request():
+            self.database.get_db()
+
+        @self.app.teardown_appcontext
+        def teardown_appcontext(error):
+            self.database.close_db()
+
+        @self.login_manager.user_loader
+        def load_user(user_id):
+            return UserLogin().from_db(user_id, self.database)
 
     # Запуск сервера
     def run_server(self):
@@ -42,43 +59,67 @@ class Server:
             terminate_func()
         return "shutdown"
 
-    def get_shop(self):
+    @login_required
+    def logout(self):
+        logout_user()  # Выход из профиля
+        return redirect("/shop")
+
+    def shop_page(self):
+        print(str(current_user.get_id()))
         return render_template("main.html")  # Отобразить данную страницу
 
-    def get_registration(self):
+    def registration_page(self):
         if request.method == "POST":  # Если пришли данные методом POST
             # Получение данных формы регистрации
             data = request.json
             try:
                 if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
                     # Упаковка ответа от БД и конвертация в JSON
-                    return json.dumps(self.response_forming(self.registration(data)))
+                    response = self.response_forming_from_db(self.registration(data))
+                    if response[REQUEST_TYPE] == OK_CODE_ANSWER:
+                        login_user(UserLogin().create(self.database.get_user_by_nickname(data[NICKNAME])), remember=True)  # Авторизация
+                        return json.dumps(self.response_forming_code(OK_CODE))
+                    res = make_response(json.dumps(response))
+                    return res
                 # Тип проверки уникальности имени или почты
                 elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:
                     if data[REQUEST_TYPE] == EMAIL:
-                        return json.dumps(self.response_forming(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER])))
+                        res = make_response(json.dumps(self.response_forming_from_db(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER]))))
+                        return res
                     else:
                         # Упаковка ответа от БД и конвертация в JSON
-                        return json.dumps(self.response_forming(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
-                return str(ERROR_CODE)
-            except Exception:
-                return [ERROR_CODE, get_code_info(ERROR_CODE)]
+                        return json.dumps(self.response_forming_from_db(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
+                return json.dumps(self.response_forming_code(ERROR_CODE))
+            except BaseException:
+                return json.dumps(self.response_forming_code(ERROR_CODE))
         else:
             return render_template("registration_panel.html")
 
-    def get_authorization(self):
-        return render_template("authorization_panel.html")
-
-    # Очистка базы данных
-    def clear_database(self):
-        self.database.clear_table("Users")
-        return redirect("/")
+    def authorization_page(self):
+        if request.method == "POST":  # Если пришли данные методом POST
+            data = request.json
+            try:
+                if data[REQUEST_TYPE] == AUTHORIZATION:  # Тип авторизации
+                    user = self.database.check_user_password(data[EMAIL], data[PASSWORD])  # Проверка пароля
+                    if user:
+                        login_user(UserLogin().create(user), remember=data[REMEMBER_ME])  # Авторизация
+                        return json.dumps(self.response_forming_code(OK_CODE))
+                    else:
+                        return json.dumps(self.response_forming_code(USER_DOES_NOT_EXIT_ERROR_COD))
+                return json.dumps(self.response_forming_code(ERROR_CODE))
+            except BaseException as error:
+                print(error)
+                return json.dumps(self.response_forming_code(ERROR_CODE))
+        elif current_user.get_id() is not None:
+            return redirect("/shop")
+        else:
+            return render_template("authorization_panel.html")
 
     # Отправка данных в БД
     def registration(self, data):
         try:
             # session["userLogged"] = data[NICKNAME]
-            data = (data[NICKNAME], data[EMAIL], data[PASSWORD])
+            data = (data[NICKNAME], data[EMAIL], werkzeug.security.generate_password_hash(data[PASSWORD]))
             database_answer = self.database.add_data_to_table(data)
             if database_answer[0] == OK_CODE or database_answer[0] == ERROR_CODE:
                 return database_answer
@@ -88,7 +129,7 @@ class Server:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     # Формирование ответа серверу JSON
-    def response_forming(self, database_answer):
+    def response_forming_from_db(self, database_answer):
         code = database_answer[0]
         if code == UNIQUE_FIELD_ERROR_CODE:  # Если ошибка уникальности, то возвращаем: тип, код, массив совпавших значений
             values = database_answer[1]
@@ -110,9 +151,24 @@ class Server:
             }
         return answer
 
+    def response_forming_code(self, code):
+        if code == OK_CODE:
+            my_type = OK_CODE_ANSWER
+        else:
+            my_type = ERROR_CODE_ANSWER
+        answer = {
+            REQUEST_TYPE: my_type,
+            CODE_ANSWER: code,
+            TEXT_ANSWER: get_code_info(code)
+        }
+        return answer
+
 
 if __name__ == '__main__':
     server_host = SERVER_HOST
     server_port = int(SERVER_PORT)
     server = Server(host=server_host, port=server_port)
     server.run_server()
+else:
+    database = Database("Database\\Users_database.db")
+    database.create_db()

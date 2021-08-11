@@ -1,57 +1,65 @@
-import sys
-sys.path.append('..')
+import math
+import time
+
+import werkzeug.security
+
 from Backend.ConstantStorage import *
 from Backend.SQLiteErrorCods import *
 import sqlite3
+from flask import g
 
 
 class Database:
 
-    def __init__(self):
-        self.sqlite_insert_with_param = """INSERT INTO Users
-                                                              (nickname, email, password)
-                                                              VALUES
-                                                              (?, ?, ?);"""
-        # database_users_table = '''CREATE TABLE Users (
-        #                                        id INTEGER PRIMARY KEY,
-        #                                        nickname text NOT NULL UNIQUE,
-        #                                        email text NOT NULL UNIQUE,
-        #                                        password text NOT NULL);'''
-        # self.database.add_table(database_users_table)
+    def __init__(self, database_path):
+        self.db_path = database_path
 
     def connect_db(self):
-        connect = sqlite3.connect(DATABASE_PATH)
-        # connect.row_factory = sqlite3.Row
+        connect = sqlite3.connect(self.db_path)
         return connect
 
-    def add_table(self, sqlite_create_table_query):
+    def get_db(self):
+        if not hasattr(g, "link_db"):
+            g.link_db = self.connect_db()
+        return g.link_db
+
+    def close_db(self):
+        if hasattr(g, "link_db"):
+            g.link_db.close()
+
+    def get_user_by_nickname(self, user_nickname):
         try:
-            database_connection = self.connect_db()
-            cursor = database_connection.cursor()
-            cursor.execute(sqlite_create_table_query)
-            database_connection.commit()
-            if cursor:
-                cursor.close()
-            if database_connection:
-                database_connection.close()
-        except sqlite3.OperationalError as error:
-            return ERROR_CODE
-        except sqlite3.Error:
-            return ERROR_CODE
-        return OK_CODE
+            g.link_db.commit()
+            cursor = g.link_db.cursor()
+            cursor.execute("SELECT * FROM Users WHERE nickname = ? LIMIT 1", (user_nickname,))
+            res = cursor.fetchall()
+            print(res)
+            if not res:
+                return False
+            return res[0]
+        except sqlite3.Error as error:
+            return False
+
+    def get_user_by_email(self, user_email):
+        try:
+            cursor = g.link_db.cursor()
+            cursor.execute("SELECT * FROM Users WHERE email = ? LIMIT 1", (user_email,))
+            res = cursor.fetchall()
+            if not res:
+                return False
+            return res[0]
+        except sqlite3.Error as error:
+            return False
 
     def check_for_uniqueness(self, key, value):
         try:
-            database_connection = self.connect_db()
-            cursor = database_connection.cursor()
+            cursor = g.link_db.cursor()
             if key == NICKNAME:
                 count = """SELECT * FROM Users WHERE nickname LIKE ?;"""
             else:
                 count = """SELECT * FROM Users WHERE email LIKE ?;"""
             cursor.execute(count, (value,))
             count = len(cursor.fetchall())
-            if database_connection:
-                database_connection.close()
             if count > 0:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{key};"]
             else:
@@ -61,8 +69,7 @@ class Database:
 
     def add_data_to_table(self, data):
         try:
-            database_connection = self.connect_db()
-            cursor = database_connection.cursor()
+            cursor = g.link_db.cursor()
             count_of_nickname = """SELECT * FROM Users WHERE nickname LIKE ?;"""
             cursor.execute(count_of_nickname, (data[0],))
             count_of_nickname = len(cursor.fetchall())
@@ -76,12 +83,8 @@ class Database:
             elif count_of_email > 0:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{EMAIL};"]
             else:
-                cursor.execute(sqlite_insert_with_param, data)
-                database_connection.commit()
-            if cursor:
-                cursor.close()
-            if database_connection:
-                database_connection.close()
+                cursor.execute(sqlite_insert_with_param, (data[0], data[1], data[2], math.floor(time.time()),))
+                g.link_db.commit()
             return [OK_CODE, get_code_info(OK_CODE)]
         except sqlite3.IntegrityError as error:
             if str(error) == "UNIQUE constraint failed: Users.email":
@@ -90,26 +93,22 @@ class Database:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME}"]
             else:
                 return [ERROR_CODE, get_code_info(ERROR_CODE)]
+        except BaseException:
+            return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
-    def get_all_data(self):
-        try:
-            database_connection = self.connect_db()
-            cursor = database_connection.cursor()
-            sqlite_select_query = """SELECT * from Users"""
-            cursor.execute(sqlite_select_query)
-            return cursor.fetchall()
-        except sqlite3.OperationalError:
-            return ERROR_CODE
-        except sqlite3.Error:
-            return ERROR_CODE
+    def check_user_password(self, user_id, password):
+        user = self.get_user_by_email(user_id)
+        if user:
+            if werkzeug.security.check_password_hash(user[3], password):
+                return user
+            else:
+                return False
+        else:
+            return False
 
-    def clear_table(self, name):
-        try:
-            database_connection = self.connect_db()
-            cursor = database_connection.cursor()
-            cursor.execute("DELETE FROM ?;", (name,))
-            database_connection.commit()
-        except sqlite3.OperationalError:
-            return ERROR_CODE
-        except sqlite3.Error:
-            return ERROR_CODE
+    def create_db(self):
+        database_connection = sqlite3.connect(self.db_path)
+        file = open(str((Path(Path.cwd()) / "Database" / "SQLite_db.sql").resolve()))
+        database_connection.executescript(file.read())
+        database_connection.commit()
+        database_connection.close()

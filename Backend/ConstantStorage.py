@@ -15,9 +15,11 @@ EMAIL: Final = "email"  # Ключ к словарю для данных тип�
 NICKNAME: Final = "nickname"  # Ключ к словарю для данных типа nickname + константа
 PASSWORD: Final = "password"  # Ключ к словарю для данных типа password + константа
 REGISTRATION: Final = "registration"  # Ключ к словарю для данных типа текст
+AUTHORIZATION: Final = "authorization"
+REMEMBER_ME: Final = "remember_me"
 SHUTDOWN: Final = "shutdown"  # константа
 
 sqlite_insert_with_param ="""INSERT INTO Users
-                                        (nickname, email, password)
+                                        (nickname, email, password, time)
                                                 VALUES
-                                        (?, ?, ?);"""  # Формат ввода в базу данных
+                                        (?, ?, ?, ?);"""  # Формат ввода в базу данных
