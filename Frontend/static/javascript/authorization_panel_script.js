@@ -88,27 +88,24 @@ function authorization() {
         type: "authorization",
         email:  inputForm[0].value,
         password: inputForm[1].value,
-        remember_me: document.querySelector('.checkRemeber').checked,
+        remember_me: document.querySelector('.checkRemeber').checked
     }
-    request.send(JSON.stringify(data));  // Отправка данных
 
     request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции authorization()
         if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
-            answer = request.responseText;  // Получение переданных данных в виде строки
-            console.log(answer)
-            if (answer === "1000") {  // Успешно
-                console.log("Correct");
-            } else if (answer.startsWith("1002:")) { // Ошибка Уникальности
-                answer = answer.substr(answer.indexOf(":") + 1)  // Парсим, нужно переделать
-                index = answer.indexOf(";")
-                while (index != -1) {
-                    console.log(answer.slice(0, index))
-                    answer = answer.substr(index + 1)
-                    index = answer.indexOf(";")
-                }
+            answer = JSON.parse(request.responseText);
+            if (answer["type"] === "ERROR_CODE") {
+                console.log(request.responseURL);
+                itemForm.forEach((element, index) => {
+                    informationError[index].innerHTML = "The data you used to sign in is invalid."
+                    addOrRemoveClass("_error", "remove", element, informationError[index]);
+                });
             } else {
-                console.log("Error")
+                itemForm.forEach((element, index) => {
+                    addOrRemoveClass("_error", "remove", element, informationError[index]);
+                });
             }
-        }
+       }
     }
+    request.send(JSON.stringify(data));  // Отправка данных
 }

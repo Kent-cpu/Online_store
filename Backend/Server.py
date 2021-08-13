@@ -9,7 +9,7 @@ from SQLiteErrorCods import *
 from ConstantStorage import *
 from Backend.User.UserLogin import UserLogin
 
-from flask import Flask, request, render_template, session, redirect, url_for, g, make_response
+from flask import Flask, request, render_template, session, redirect, url_for, g, make_response, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
 
@@ -24,6 +24,7 @@ class Server:
                          template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
         self.login_manager = LoginManager(self.app)
         self.app.config["SECRET_KEY"] = "wefwefnuwi.owej88943rhjnfw.wefweiof.j9348hjfhjew"
+        self.app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 16
         self.database = Database(os.path.join(self.app.root_path, "Database\\Users_database.db"))
         # Описывает действия при открытие ссылки
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
@@ -45,6 +46,11 @@ class Server:
         def load_user(user_id):
             return UserLogin().from_db(user_id, self.database)
 
+        @self.login_manager.needs_refresh_handler
+        @self.login_manager.unauthorized_handler
+        def unauthorized():
+            return redirect('/authorization')
+
     # Запуск сервера
     def run_server(self):
         self.server = threading.Thread(target=self.app.run(debug=True), kwargs={
@@ -65,7 +71,19 @@ class Server:
         return redirect("/shop")
 
     def shop_page(self):
-        print(str(current_user.get_id()))
+        if request.method == "POST":
+            data = request.json
+            try:
+                if data[REQUEST_TYPE] == USER_INFO:  # Тип регистрации
+                    arr_of_requested_data = data[REQUESTED_DATA]
+                    answer = {
+                        REQUEST_TYPE: USER_INFO,
+                        REQUESTED_DATA: self.get_user_info(arr_of_requested_data)
+                    }
+                    return json.dumps(answer)
+                return json.dumps(self.response_forming_code(ERROR_CODE))
+            except BaseException:
+                return json.dumps(self.response_forming_code(ERROR_CODE))
         return render_template("main.html")  # Отобразить данную страницу
 
     def registration_page(self):
@@ -92,8 +110,7 @@ class Server:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
             except BaseException:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
-        else:
-            return render_template("registration_panel.html")
+        return render_template("registration_panel.html")
 
     def authorization_page(self):
         if request.method == "POST":  # Если пришли данные методом POST
@@ -112,15 +129,14 @@ class Server:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
         elif current_user.get_id() is not None:
             return redirect("/shop")
-        else:
-            return render_template("authorization_panel.html")
+        return render_template("authorization_panel.html")
 
     # Отправка данных в БД
     def registration(self, data):
         try:
             # session["userLogged"] = data[NICKNAME]
             data = (data[NICKNAME], data[EMAIL], werkzeug.security.generate_password_hash(data[PASSWORD]))
-            database_answer = self.database.add_data_to_table(data)
+            database_answer = self.database.add_user(data)
             if database_answer[0] == OK_CODE or database_answer[0] == ERROR_CODE:
                 return database_answer
             elif database_answer[0] == UNIQUE_FIELD_ERROR_CODE:
@@ -129,7 +145,8 @@ class Server:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     # Формирование ответа серверу JSON
-    def response_forming_from_db(self, database_answer):
+    @staticmethod
+    def response_forming_from_db(database_answer):
         code = database_answer[0]
         if code == UNIQUE_FIELD_ERROR_CODE:  # Если ошибка уникальности, то возвращаем: тип, код, массив совпавших значений
             values = database_answer[1]
@@ -151,7 +168,8 @@ class Server:
             }
         return answer
 
-    def response_forming_code(self, code):
+    @staticmethod
+    def response_forming_code(code):
         if code == OK_CODE:
             my_type = OK_CODE_ANSWER
         else:
@@ -161,6 +179,24 @@ class Server:
             CODE_ANSWER: code,
             TEXT_ANSWER: get_code_info(code)
         }
+        return answer
+
+    @staticmethod
+    def get_user_info(arr_of_requested_data):
+        answer = {}
+        if current_user.get_id() is not None:
+            answer[IS_LOGIN] = True
+            for data in arr_of_requested_data:
+                if data == EMAIL:
+                    answer[EMAIL] = current_user.get_email()
+                elif data == NICKNAME:
+                    answer[NICKNAME] = current_user.get_nickname()
+                elif data == ACCOUNT_CREATION_TIME:
+                    answer[NICKNAME] = current_user.get_account_creation_time()
+                elif data == AVATAR:
+                    answer[AVATAR] = current_user.get_avatar()
+        else:
+            answer[IS_LOGIN] = False
         return answer
 
 

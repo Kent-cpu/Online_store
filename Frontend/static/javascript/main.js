@@ -3,4 +3,3 @@ document.querySelectorAll('.faq-accordion__item-trigger').forEach(titleAccordion
         e.target.closest('.faq-accordion__item').classList.toggle('faq-accordion__item--active');
     })
 });
-

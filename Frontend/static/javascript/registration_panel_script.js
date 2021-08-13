@@ -155,26 +155,27 @@ function registration() {
         email: document.getElementById("email").value,
         password: document.getElementById("psw").value,
     }
-    request.send(JSON.stringify(result));  // Отправка данных
 
     request.onreadystatechange = function () {   // Функция активирующаяся при изменении статуса запроса, работает при завершение функции registration()
         if (request.readyState === 4 && request.status === 200) { // Успешное получение данных с сервера
-            answer = request.responseText;  // Получение переданных данных в виде строки
-            console.log(answer)
-            if (answer === "1000") {  // Успешно
-                console.log("Correct");
-            } else if (answer.startsWith("1002:")) { // Ошибка Уникальности
-                answer = answer.substr(answer.indexOf(":") + 1)  // Парсим, нужно переделать
-                index = answer.indexOf(";")
-                while (index != -1) {
-                    console.log(answer.slice(0, index))
-                    answer = answer.substr(index + 1)
-                    index = answer.indexOf(";")
+            answer = JSON.parse(request.responseText);
+            if (answer["type"] === "ERROR_CODE") {
+                if (answer["text"] === "email;" && input.classList.contains("_email") && input.classList.contains("_nickname")) {
+                    informationError[indexErrorInfo].innerHTML = "This email is registered. Enter another.";
+                    addOrRemoveClass("_error", "add", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
+                    informationError[indexErrorInfo].innerHTML = "Already taken";
+                    addOrRemoveClass("_error", "add", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
+                } else if (answer["text"] === "email;" && input.classList.contains("_email")) {
+                    informationError[indexErrorInfo].innerHTML = "This email is registered. Enter another.";
+                    addOrRemoveClass("_error", "add", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
+                } else if (answer["text"] === "nickname;" && input.classList.contains("_nickname")) {
+                    informationError[indexErrorInfo].innerHTML = "Already taken";
+                    addOrRemoveClass("_error", "add", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
                 }
-                console.log(request.responseText)
             } else {
-                console.log("Error")
+                addOrRemoveClass("_error", "remove", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
             }
         }
     }
+    request.send(JSON.stringify(result));  // Отправка данных
 }

@@ -33,7 +33,6 @@ class Database:
             cursor = g.link_db.cursor()
             cursor.execute("SELECT * FROM Users WHERE nickname = ? LIMIT 1", (user_nickname,))
             res = cursor.fetchall()
-            print(res)
             if not res:
                 return False
             return res[0]
@@ -67,7 +66,7 @@ class Database:
         except Exception:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
-    def add_data_to_table(self, data):
+    def add_user(self, data):
         try:
             cursor = g.link_db.cursor()
             count_of_nickname = """SELECT * FROM Users WHERE nickname LIKE ?;"""
@@ -83,7 +82,10 @@ class Database:
             elif count_of_email > 0:
                 return [UNIQUE_FIELD_ERROR_CODE, f"{EMAIL};"]
             else:
-                cursor.execute(sqlite_insert_with_param, (data[0], data[1], data[2], math.floor(time.time()),))
+                cursor.execute("""INSERT INTO Users 
+                (nickname, email, password, avatar, time)
+                VALUES
+                (?, ?, ?, NULL, ?);""", (data[0], data[1], data[2], math.floor(time.time()),))
                 g.link_db.commit()
             return [OK_CODE, get_code_info(OK_CODE)]
         except sqlite3.IntegrityError as error:
@@ -92,15 +94,17 @@ class Database:
             elif str(error) == "UNIQUE constraint failed: Users.nickname":
                 return [UNIQUE_FIELD_ERROR_CODE, f"{NICKNAME}"]
             else:
+                print(error)
                 return [ERROR_CODE, get_code_info(ERROR_CODE)]
-        except BaseException:
+        except BaseException as error:
+            print(error)
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     def check_user_password(self, user_id, password):
-        user = self.get_user_by_email(user_id)
-        if user:
-            if werkzeug.security.check_password_hash(user[3], password):
-                return user
+        answer = self.get_user_by_email(user_id)
+        if answer:
+            if werkzeug.security.check_password_hash(answer[3], password):
+                return answer
             else:
                 return False
         else:
