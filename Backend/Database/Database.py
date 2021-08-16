@@ -1,7 +1,6 @@
 import math
 import time
 import sys
-sys.path.append('..')
 import werkzeug.security
 
 from Backend.ConstantStorage import *
@@ -99,6 +98,19 @@ class Database:
                 return [ERROR_CODE, get_code_info(ERROR_CODE)]
         except BaseException as error:
             print(error)
+            return [ERROR_CODE, get_code_info(ERROR_CODE)]
+
+    def update_user_avatar(self, img, user_nickname):
+        if not img:
+            return [ERROR_CODE, get_code_info(ERROR_CODE)]
+        try:
+            cursor = g.link_db.cursor()
+            binary = sqlite3.Binary(img)
+            update_avatar = "UPDATE users SET avatar = ? WHERE nickname = ?"
+            cursor.execute(update_avatar, (img, user_nickname))
+            g.link_db.commit()
+            return [OK_CODE, get_code_info(OK_CODE)]
+        except sqlite3.Error as error:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     def check_user_password(self, user_id, password):

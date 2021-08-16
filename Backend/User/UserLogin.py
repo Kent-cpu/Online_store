@@ -1,4 +1,5 @@
 from Backend.ConstantStorage import *
+import re
 
 
 class UserLogin:
@@ -39,13 +40,17 @@ class UserLogin:
         if self.__user and not self.__user[4]:
             try:
                 with app.open_resource(str(Path(
-                        Path(app.root_path) / ".." / "Frontend" / "static" / "img" / "default_img" / "default_avatar.png").resolve()),
+                        Path(
+                            app.root_path) / ".." / "Frontend" / "static" / "img" / "default_img" / "default_avatar.png").resolve()),
                                        "rb") as f:
                     img = f.read()
             except FileNotFoundError as error:
-                print(str(Path(
-                    Path(app.root_path) / ".." / "Frontend" / "static" / "img" / "default_img" / "default_avatar.png").resolve()) + ": Not found")
+                print("Not found")
         else:
             img = self.__user[AVATAR]
 
         return img
+
+    def verifyExt(self, filename):
+        ext = filename.rsplit(".", 1)[1]
+        return re.match("^((png)|(PNG)|(jpeg)|(JPEG)|(jpg)|(JPG))$", ext) is not None
