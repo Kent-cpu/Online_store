@@ -160,14 +160,17 @@ body {
 
 .registration__form__item__submit {
   font-size: 18px;
-  background-color: #15c441;
   border: 0;
   width: 100%;
   padding: 10px 0px;
+  height: 50px;
+  background-color: #15c441;
 }
 
-.registration__form__item__submit:hover {
-  background-color: #13ad39;
+.registration__form__item__submit_disabled {
+  font-size: 0;
+  background: #13ad39 url(../img/download.gif) no-repeat center center;
+  background-size: 20px;
 }
 
 .registration__form__item .info_password {

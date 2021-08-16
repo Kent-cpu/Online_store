@@ -29,7 +29,7 @@ class Server:
         # Описывает действия при открытие ссылки
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.shop_page)
-        self.app.add_url_rule('/shop', view_func=self.shop_page)
+        self.app.add_url_rule('/shop', methods=['POST', 'GET'], view_func=self.shop_page)
         self.app.add_url_rule('/logout', view_func=self.logout)
         self.app.add_url_rule('/registration', methods=['POST', 'GET'], view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
@@ -80,6 +80,7 @@ class Server:
                         REQUEST_TYPE: USER_INFO,
                         REQUESTED_DATA: self.get_user_info(arr_of_requested_data)
                     }
+                    print(answer)
                     return json.dumps(answer)
                 return json.dumps(self.response_forming_code(ERROR_CODE))
             except BaseException:

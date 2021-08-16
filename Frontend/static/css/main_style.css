@@ -244,6 +244,7 @@ h5 {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  margin-right: 15px;
 }
 
 .socials-wrapper__item:not(:last-child) {
@@ -263,6 +264,86 @@ h5 {
 
 .btn-wrapper {
   margin-left: 44px;
+  display: none;
+}
+
+.user-profile {
+  display: none;
+  cursor: pointer;
+  width: 60px;
+  position: relative;
+}
+
+.user-profile__wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+}
+
+.user-profile__avatar {
+  width: 100%;
+  height: 100%;
+}
+
+.user-profile__trigger {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  -webkit-transform: translateY(-50%) rotate(-180deg);
+  -ms-transform: translateY(-50%) rotate(-180deg);
+  transform: translateY(-50%) rotate(-180deg);
+  -webkit-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.user-profile__trigger_open {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.user-profile__list {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: -2;
+  text-align: center;
+  width: 170px;
+  background-color: #fff;
+  border: 2px solid #d8e3fe;
+  border-radius: 8px;
+  -webkit-transition: all .2s ease;
+  -o-transition: all .2s ease;
+  transition: all .2s ease;
+}
+
+.user-profile__list_open {
+  visibility: visible;
+  opacity: 1;
+  z-index: 2;
+  top: 105%;
+}
+
+.user-profile__list__item:hover {
+  background-color: #d2e1ff;
+  border-radius: 5px;
+}
+
+.user-profile__list__item:not(:last-child) {
+  border-bottom: 2px solid #eee;
+}
+
+.user-profile__list__item__link {
+  word-break: break-all;
+  text-decoration: none;
+  display: inline-block;
+  padding: 12px 10px;
+  font-size: 15px;
+  color: #0004ff;
+  font-weight: 500;
 }
 
 .section-hero-image {
@@ -402,7 +483,6 @@ h5 {
 
 .section-features {
   padding: 141px 0px;
-  /* background: url_for('static', filename='img/clouds.svg') no-repeat center center; */
 }
 
 .section-features__title {
@@ -424,6 +504,7 @@ h5 {
 .section-features__content {
   display: -ms-grid;
   display: grid;
+  -ms-grid-columns: (1fr)[4];
   grid-template-columns: repeat(4, 1fr);
   margin-bottom: 117px;
   grid-column-gap: 67px;
@@ -599,7 +680,9 @@ h5 {
 .slider-blog__item-gallery {
   display: -ms-grid;
   display: grid;
+  -ms-grid-columns: (120px)[3];
   grid-template-columns: repeat(3, 120px);
+  -ms-grid-rows: (126px)[2];
   grid-template-rows: repeat(2, 126px);
   grid-gap: 12px;
   margin-right: 10%;
@@ -625,7 +708,7 @@ h5 {
   width: 64px;
   height: 64px;
   border-radius: 100%;
-  background: #fff url('../img/icon-loupe.svg') no-repeat 50% 50%;
+  background: #fff url_for("static", filename= "img/icon-loupe.svg") no-repeat 50% 50%;
   opacity: 0;
   -webkit-transition: all 0.2s linear;
   -o-transition: all 0.2s linear;
@@ -710,7 +793,7 @@ h5 {
   display: block;
   width: 40px;
   height: 40px;
-  background: url('../img/arrow-left-icon.svg') no-repeat center center;
+  background: url_for("static", filename= "img/arrow-left-icon.svg") no-repeat center center;
 }
 
 .btn-blog--prev {
@@ -882,7 +965,7 @@ h5 {
 }
 
 .section-get-started {
-  background: url('../img/clouds-get-started.svg') no-repeat center center;
+  background: url_for("static", filename= "img/clouds-get-started.svg") no-repeat center center;
   background-color: #6687FF;
   text-align: center;
 }
