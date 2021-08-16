@@ -13,7 +13,6 @@ from flask import Flask, request, render_template, session, redirect, url_for, g
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
 
-
 class Server:
 
     # Инициализация сервера
@@ -33,6 +32,7 @@ class Server:
         self.app.add_url_rule('/logout', view_func=self.logout)
         self.app.add_url_rule('/registration', methods=['POST', 'GET'], view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
+        self.app.add_url_rule('/profile', methods = ['POST', 'GET'], view_func = self.getProfile)
 
         @self.app.before_request
         def before_request():
@@ -131,6 +131,9 @@ class Server:
         elif current_user.get_id() is not None:
             return redirect("/shop")
         return render_template("authorization_panel.html")
+
+    def getProfile(self):
+        return render_template("profile_panel.html")
 
     # Отправка данных в БД
     def registration(self, data):

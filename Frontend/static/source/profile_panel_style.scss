@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Roboto:wght@400;500&display=swap');
+
+// === Mixin ===
+@mixin roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+@mixin quicksand{
+    font-family: 'Quicksand', sans-serif;
+}
+
+// === / Mixin ===
+
+
+// === Variable ===
+$fw-light: 300;
+$fw-regular: 400;
+$fw-medium: 500;
+$fw-bold: 700;
+
+$fz-sm: 12px;
+$fz-medium: 15px;
+
+$transition: .2s;
+
+$color-divider: #d8e3fe;
+
+$color-secondary:#6188ff;
+$color-white: #fff;
+$color-primary: #697cab;
+
+//Gray
+
+// === / Variable ===
+
+
+// === Common === 
+
+body{
+    @include roboto;
+    color: #8d96bd;
+}
+
+.section-outer{
+    border-bottom: 1px solid $color-divider;
+}
+
+.section-inner{
+    max-width: 900px;
+    margin: 0 auto;
+    
+    &--wide{
+        max-width: 1200px;
+    }
+}
+
+.input{
+    padding: 21px 168px 21px 23px;
+    background-color: #efeff7;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: $fw-bold;
+    border: 1px transparent solid;
+}
+
+.btn{
+    @include quicksand;
+    display: inline-block;
+    border: 1px solid transparent;
+    font-weight: $fw-bold;
+    font-size: $fz-sm;
+    color: #3a79ff;
+    padding: 13px 16px;
+    white-space: nowrap;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all $transition linear;
+    &--primary{
+        background: #d2e1ff;
+        color: #3A79FF;
+        &:hover{
+            background-color: darken(#d2e1ff, 10%);
+        }
+    }
+
+    &--secondary{
+        color: $color-white;
+        background-color: #4c85ff;
+        &:hover{
+            background-color: darken(#4c85ff, 10%);
+        }
+    }
+
+    &--grayscale{
+        color: #7382A3;
+        background-color: #E8ECF4;
+        &:hover{
+            background-color: darken(#E8ECF4, 10%);
+        }
+    }
+
+    &--danger{
+        color: #d43f3f;
+        background-color: #ffd7d7;
+
+        &:hover{
+            background-color: darken(#ffd7d7, 5%);
+        }
+    }
+
+    &--no--bg{
+        color: #adb4d2;
+        border: 1px solid #D1D1E4;  
+        &:hover{
+            color: darken(#adb4d2, 10%);
+            border: 1px solid darken(#adb4d2, 10%)
+        }
+    }
+   
+}
+
+
+.ta-c{
+    text-align: center;
+}
+
+// === / Common === 
+
+// === HEADER ===
+.section-header{
+    padding: 25px 0px;
+}
+
+.main-navigation{
+    display: flex;
+    align-items: center;
+}
+
+.logo{
+    &__link{
+        display: block;
+        width: 26px;
+        height: 26px;
+        background-color: #5E81FE;
+        border-radius: 100%;
+        margin-right: 73px;
+    }
+}
+
+.nav-wrapper{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    &__item{
+        &:not(:last-child){
+            margin-right: 42px;
+        }
+        &-link{
+            @include quicksand;
+            text-decoration: none;
+            color:$color-primary;
+            font-weight: $fw-medium;
+            font-size: $fz-sm;
+            transition: all $transition linear;
+            &:hover{
+                color: $color-secondary;
+            }
+            &--active{
+                font-weight: $fw-bold;
+                color: $color-secondary;
+            }
+        }
+        
+    }
+}
+
+.socials{
+    margin-left: auto;
+}
+
+.socials-wrapper{
+    list-style: none;
+    display: flex;
+    margin-right: 15px;
+    &__item{
+        &:not(:last-child){
+            margin-right: 35px;
+        }
+        &-link{
+            path{
+                fill: #b6bac7;
+                transition: all $transition linear;
+            }
+            &:hover{
+                path{
+                    fill: #6188ff;
+                }
+            }
+        }
+        
+    }
+}
+
+
+.user-profile{
+    display: none;
+    cursor: pointer;
+    width: 60px;
+    position: relative; 
+    &__wrapper{
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+    }
+
+    &__avatar{
+        width: 100%;
+        height: 100%;
+    }
+
+    &__trigger{
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%) rotate(-180deg);
+        transition: all 0.2s linear;
+        &_open{
+            transform: rotate(0);
+        }
+    }
+
+    &__list{
+        position: absolute;
+        top: 50%;
+        right: 0;
+        opacity: 0;
+        visibility: hidden;
+        z-index: -2;
+        text-align: center;
+        width: 170px;
+        background-color: #fff;
+        border: 2px solid $color-divider;
+        border-radius: 8px;
+        transition: all .2s ease;
+        
+        &_open{
+            visibility: visible;
+            opacity: 1;
+            z-index: 2;
+            top: 105%;
+        }
+        &__item{
+            &:hover{
+                background-color: #d2e1ff;
+                border-radius: 5px;
+            }
+            &:not(:last-child){
+                border-bottom: 2px solid #eee;
+            }
+            &__link{
+                word-break: break-all;
+                text-decoration: none;
+                display: inline-block;
+                padding: 12px 10px;
+                font-size: 15px;
+                color: #0004ff;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+
+.profile{
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    margin-top: 40px;
+    &__avatar{
+        flex-basis: 20%;
+        // margin-right: 25px;
+        &__icon{
+            width: 280px;
+            height: 280px;
+            border-radius: 100%;
+            display: block;
+        }
+    }
+
+    &__content{
+        flex-basis: 65%;
+        &__underline{
+            display: flex;
+            margin-bottom: 30px;
+
+            &__item{
+                display: flex;
+                flex-direction: column;
+                
+                &:not(:last-child){
+                    margin-right: 50px;
+                }
+
+                a{
+                    text-decoration: none;
+                    font-size: 18px;
+                }
+            }
+
+        }
+        
+    }
+}
