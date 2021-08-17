@@ -75,12 +75,13 @@ class Server:
     @login_required
     def upload_user_avatar(self):
         if request.method == "POST":
+            #data = request.json
             file = request.files[FILE]
             if file and current_user.verifyExt(file.filename):
                 try:
                     img = file.read()
                     res = self.database.update_user_avatar(img, current_user.get_nickname())
-                    if res[0] == ERROR_CODE:
+                    if res == ERROR_CODE:
                         return self.response_forming_code(ERROR_CODE)
                     else:
                         return self.response_forming_code(OK_CODE)
@@ -98,9 +99,8 @@ class Server:
                     arr_of_requested_data = data[REQUESTED_DATA]
                     answer = {
                         REQUEST_TYPE: USER_INFO,
-                        REQUESTED_DATA: self.get_user_info(arr_of_requested_data)
+                        DATA: self.get_user_info(arr_of_requested_data)
                     }
-                    print(answer)
                     return json.dumps(answer)
                 return json.dumps(self.response_forming_code(ERROR_CODE))
             except BaseException:
@@ -114,7 +114,7 @@ class Server:
             try:
                 if data[REQUEST_TYPE] == REGISTRATION:  # Тип регистрации
                     # Упаковка ответа от БД и конвертация в JSON
-                    response = self.response_forming_from_db(self.registration(data))
+                    response = self.response_forming_from_db(self.registration(data[DATA]))
                     if response[REQUEST_TYPE] == OK_CODE_ANSWER:
                         login_user(UserLogin().create(self.database.get_user_by_nickname(data[NICKNAME])),
                                    remember=True)  # Авторизация
@@ -122,15 +122,10 @@ class Server:
                     res = make_response(json.dumps(response))
                     return res
                 # Тип проверки уникальности имени или почты
-                elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:
-                    if data[REQUEST_TYPE] == EMAIL:
-                        res = make_response(json.dumps(self.response_forming_from_db(
-                            self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER]))))
-                        return res
-                    else:
-                        # Упаковка ответа от БД и конвертация в JSON
-                        return json.dumps(self.response_forming_from_db(
-                            self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
+                elif data[REQUEST_TYPE] == CHECK_DATA_FOR_UNIQUENESS:
+                    # Упаковка ответа от БД и конвертация в JSON
+                    return json.dumps(self.response_forming_from_db(
+                        self.database.check_for_uniqueness(data[DATA])))
                 return json.dumps(self.response_forming_code(ERROR_CODE))
             except BaseException:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
@@ -141,6 +136,7 @@ class Server:
             data = request.json
             try:
                 if data[REQUEST_TYPE] == AUTHORIZATION:  # Тип авторизации
+                    data = data[DATA]
                     user = self.database.check_user_password(data[EMAIL], data[PASSWORD])  # Проверка пароля
                     if user:
                         login_user(UserLogin().create(user), remember=data[REMEMBER_ME])  # Авторизация
@@ -158,13 +154,12 @@ class Server:
     # Отправка данных в БД
     def registration(self, data):
         try:
-            # session["userLogged"] = data[NICKNAME]
             data = (data[NICKNAME], data[EMAIL], werkzeug.security.generate_password_hash(data[PASSWORD]))
             database_answer = self.database.add_user(data)
             if database_answer[0] == OK_CODE or database_answer[0] == ERROR_CODE:
                 return database_answer
             elif database_answer[0] == UNIQUE_FIELD_ERROR_CODE:
-                return [UNIQUE_FIELD_ERROR_CODE, database_answer[1].split(";")]
+                return [UNIQUE_FIELD_ERROR_CODE, database_answer[1]]
         except Exception:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
@@ -177,18 +172,16 @@ class Server:
             answer = {
                 REQUEST_TYPE: ERROR_CODE_ANSWER,
                 CODE_ANSWER: code,
-                VALUE_ANSWER: values
+                DATA: values
             }
         else:  # Иначе возвращаем: тип, код, текст
-            text = database_answer[1]
             if code == OK_CODE:
                 my_type = OK_CODE_ANSWER
             else:
                 my_type = ERROR_CODE_ANSWER
             answer = {
                 REQUEST_TYPE: my_type,
-                CODE_ANSWER: code,
-                TEXT_ANSWER: text
+                CODE_ANSWER: code
             }
         return answer
 
@@ -200,8 +193,7 @@ class Server:
             my_type = ERROR_CODE_ANSWER
         answer = {
             REQUEST_TYPE: my_type,
-            CODE_ANSWER: code,
-            TEXT_ANSWER: get_code_info(code)
+            CODE_ANSWER: code
         }
         return answer
 
@@ -229,7 +221,7 @@ class Server:
     def redirect_to(url):
         answer = {
             REQUEST_TYPE: REDIRECT,
-            TEXT_ANSWER: url
+            DATA: url
         }
         return answer
 
