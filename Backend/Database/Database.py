@@ -103,7 +103,10 @@ class Database:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
 
     def update_user_avatar(self, img, user_nickname):
+<<<<<<< HEAD
         print(img)
+=======
+>>>>>>> 6b9180092cb4cc0fbdbb0bb7a2f7123f42fd7596
         if not img:
             return [ERROR_CODE, get_code_info(ERROR_CODE)]
         try:

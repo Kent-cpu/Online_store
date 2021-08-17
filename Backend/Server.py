@@ -23,16 +23,21 @@ class Server:
                          template_folder=str((Path(Path.cwd()) / ".." / "Frontend" / "templates").resolve()))
         self.login_manager = LoginManager(self.app)
         self.app.config["SECRET_KEY"] = "wefwefnuwi.owej88943rhjnfw.wefweiof.j9348hjfhjew"
-        self.app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 16
+        self.app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024 * 10
         self.database = Database(os.path.join(self.app.root_path, "Database\\Users_database.db"))
         # Описывает действия при открытие ссылки
         self.app.add_url_rule('/shutdown', view_func=self.shutdown)
         self.app.add_url_rule('/', view_func=self.shop_page)
         self.app.add_url_rule('/shop', methods=['POST', 'GET'], view_func=self.shop_page)
         self.app.add_url_rule('/logout', view_func=self.logout)
-        self.app.add_url_rule('/registration', methods=['POST', 'GET'], view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
+        self.app.add_url_rule('/registration', methods=['POST', 'GET'],
+                              view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
+<<<<<<< HEAD
         self.app.add_url_rule('/profile', methods = ['POST', 'GET'], view_func = self.getProfile)
+=======
+        self.app.add_url_rule('/upload_user_avatar', methods=['POST', 'GET'], view_func=self.upload_user_avatar)
+>>>>>>> 6b9180092cb4cc0fbdbb0bb7a2f7123f42fd7596
 
         @self.app.before_request
         def before_request():
@@ -70,6 +75,24 @@ class Server:
         logout_user()  # Выход из профиля
         return redirect("/shop")
 
+    @login_required
+    def upload_user_avatar(self):
+        if request.method == "POST":
+            file = request.files[FILE]
+            if file and current_user.verifyExt(file.filename):
+                try:
+                    img = file.read()
+                    res = self.database.update_user_avatar(img, current_user.get_nickname())
+                    if res[0] == ERROR_CODE:
+                        return self.response_forming_code(ERROR_CODE)
+                    else:
+                        return self.response_forming_code(OK_CODE)
+                except FileNotFoundError:
+                    return self.response_forming_code(ERROR_CODE)
+            else:
+                return self.response_forming_code(ERROR_CODE)
+        return redirect("/shop")
+
     def shop_page(self):
         if request.method == "POST":
             data = request.json
@@ -96,18 +119,21 @@ class Server:
                     # Упаковка ответа от БД и конвертация в JSON
                     response = self.response_forming_from_db(self.registration(data))
                     if response[REQUEST_TYPE] == OK_CODE_ANSWER:
-                        login_user(UserLogin().create(self.database.get_user_by_nickname(data[NICKNAME])), remember=True)  # Авторизация
+                        login_user(UserLogin().create(self.database.get_user_by_nickname(data[NICKNAME])),
+                                   remember=True)  # Авторизация
                         return json.dumps(self.response_forming_code(OK_CODE))
                     res = make_response(json.dumps(response))
                     return res
                 # Тип проверки уникальности имени или почты
                 elif data[REQUEST_TYPE] == EMAIL or data[REQUEST_TYPE] == NICKNAME:
                     if data[REQUEST_TYPE] == EMAIL:
-                        res = make_response(json.dumps(self.response_forming_from_db(self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER]))))
+                        res = make_response(json.dumps(self.response_forming_from_db(
+                            self.database.check_for_uniqueness(EMAIL, data[TEXT_ANSWER]))))
                         return res
                     else:
                         # Упаковка ответа от БД и конвертация в JSON
-                        return json.dumps(self.response_forming_from_db(self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
+                        return json.dumps(self.response_forming_from_db(
+                            self.database.check_for_uniqueness(NICKNAME, data[TEXT_ANSWER])))
                 return json.dumps(self.response_forming_code(ERROR_CODE))
             except BaseException:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
@@ -199,8 +225,18 @@ class Server:
                     answer[NICKNAME] = current_user.get_account_creation_time()
                 elif data == AVATAR:
                     answer[AVATAR] = current_user.get_avatar()
+                    if not answer[AVATAR]:
+                        answer[AVATAR] = ""
         else:
             answer[IS_LOGIN] = False
+        return answer
+
+    @staticmethod
+    def redirect_to(url):
+        answer = {
+            REQUEST_TYPE: REDIRECT,
+            TEXT_ANSWER: url
+        }
         return answer
 
 
