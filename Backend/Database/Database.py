@@ -2,9 +2,10 @@ import math
 import time
 import sys
 import werkzeug.security
-
-from Backend.ConstantStorage import *
-from Backend.SQLiteErrorCods import *
+import sys
+sys.path.append("..")
+from ConstantStorage import *
+from SQLiteErrorCods import *
 import sqlite3
 from flask import g
 

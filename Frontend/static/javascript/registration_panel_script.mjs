@@ -1,4 +1,5 @@
 import { addOrRemoveClass } from "./general_functions.mjs";
+import { NICKNAME, EMAIL, PASSWORD, CHECK_DATA_FOR_UNIQUENESS, REGISTRATION, DATA } from "./constantStorage.mjs";
 
 const itemForm = document.querySelectorAll(".registration__form__item");
 const inputForm = document.querySelectorAll(".registration__form__item__input");
@@ -82,6 +83,7 @@ function validate(input, indexErrorInfo) {
         }
 
         checkingForUniquenessData(input).then(coincidence => {
+            console.log(coincidence)
             if (coincidence) {
                 informationError[indexErrorInfo].innerHTML = "Already taken";
                 addOrRemoveClass("_error", "add", informationError[indexErrorInfo], itemForm[indexErrorInfo]);
@@ -130,8 +132,10 @@ function validate(input, indexErrorInfo) {
 
 async function checkingForUniquenessData(input) {
     let requestedData = {
-        type: input.id,
-        text: String(input.value),
+        type: [CHECK_DATA_FOR_UNIQUENESS],
+        [DATA]: {
+            [input.name]: String(input.name),
+        },
     }
 
     try {
@@ -143,6 +147,7 @@ async function checkingForUniquenessData(input) {
             },
         });
         const answer = await response.json();
+        console.log(answer)
         if (answer.type === "OK_CODE") {
             return false;
         }
@@ -154,10 +159,12 @@ async function checkingForUniquenessData(input) {
 
 async function registration() {
     let sentData = {
-        type: "registration",
-        nickname: document.querySelector("._nickname").value,
-        email: document.querySelector("._email").value,
-        password: document.querySelector("._password").value,
+        type: [REGISTRATION],
+        [DATA]: {
+            [NICKNAME]: document.querySelector("._nickname").value,
+            [EMAIL]: document.querySelector("._email").value,
+            [PASSWORD]: document.querySelector("._password").value,
+        },
     };
     try {
         const response = await fetch('/registration', {

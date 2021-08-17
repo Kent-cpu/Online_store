@@ -1,5 +1,9 @@
 import { addOrRemoveClass } from "./general_functions.mjs";
 
+import { EMAIL, PASSWORD, AUTHORIZATION, DATA, REMEMBER_ME } from "./constantStorage.mjs";
+
+
+
 const itemForm = document.querySelectorAll(".authorization__form__item");
 const inputForm = document.querySelectorAll(".authorization__form__item__input");
 const informationError = document.querySelectorAll(".info-error");
@@ -76,10 +80,12 @@ function validate(input, indexErrorInfo) {
 
 async function authorization() {
     let requestedData = {
-        type: "authorization",
-        email: inputForm[0].value,
-        password: inputForm[1].value,
-        remember_me: document.querySelector('.checkRemeber').checked
+        type: [AUTHORIZATION],
+        [DATA]: {
+            [EMAIL]: document.querySelector("._email"),
+            [PASSWORD]: document.querySelector("._password"),
+            [REMEMBER_ME]: document.querySelector('.checkRemeber').checked,
+        },
     };
 
     try {
@@ -91,6 +97,7 @@ async function authorization() {
             },
         });
         const userData = await response.json();
+        console.log(userData)
         if (userData.type === "OK_CODE") {
             window.location.href = "/";
         } else {

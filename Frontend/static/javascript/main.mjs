@@ -1,12 +1,16 @@
+import { REQUESTED_DATA, USER_INFO } from "./constantStorage.mjs"
+
 "use strict"
+
+
 
 document.addEventListener("DOMContentLoaded", (e) => {
     postDataUser();
 
     async function postDataUser() {
         let requestedData = {
-            type: "user_info",
-            requested_data: ["nickname"],
+            type: USER_INFO,
+            [REQUESTED_DATA]: ["nickname"],
         };
 
         try {
@@ -18,6 +22,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
                 },
             });
             const userData = await response.json();
+            console.log(userData)
             showOrHideProfile(userData);
         } catch (err) {
             console.log(err);
@@ -25,7 +30,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
     }
 
     function showOrHideProfile(userData) {
-        if (userData.requested_data.is_login) {
+        if (userData.data.is_login) {
             document.querySelector('.user-profile').style.display = "block";
             document.querySelector('.user-profile__nickname').innerHTML = userData.requested_data.nickname;
         } else {
