@@ -33,11 +33,8 @@ class Server:
         self.app.add_url_rule('/registration', methods=['POST', 'GET'],
                               view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
-<<<<<<< HEAD
-        self.app.add_url_rule('/profile', methods = ['POST', 'GET'], view_func = self.getProfile)
-=======
+        self.app.add_url_rule('/profile', methods=['POST', 'GET'], view_func=self.get_profile)
         self.app.add_url_rule('/upload_user_avatar', methods=['POST', 'GET'], view_func=self.upload_user_avatar)
->>>>>>> 6b9180092cb4cc0fbdbb0bb7a2f7123f42fd7596
 
         @self.app.before_request
         def before_request():
@@ -78,8 +75,7 @@ class Server:
     @login_required
     def upload_user_avatar(self):
         if request.method == "POST":
-            #data = request.json
-            file = request.files[FILE]
+            file = request.files['myFile']
             if file and current_user.verifyExt(file.filename):
                 try:
                     img = file.read()
@@ -154,7 +150,7 @@ class Server:
             return redirect("/shop")
         return render_template("authorization_panel.html")
 
-    def getProfile(self):
+    def get_profile(self):
         return render_template("profile_panel.html")
 
     # Отправка данных в БД

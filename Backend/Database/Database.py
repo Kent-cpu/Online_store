@@ -119,7 +119,7 @@ class Database:
             cursor = g.link_db.cursor()
             binary = sqlite3.Binary(img)
             update_avatar = "UPDATE users SET avatar = ? WHERE nickname = ?"
-            cursor.execute(update_avatar, (img, user_nickname))
+            cursor.execute(update_avatar, (binary, user_nickname))
             g.link_db.commit()
             return OK_CODE
         except sqlite3.Error as error:

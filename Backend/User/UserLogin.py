@@ -6,12 +6,10 @@ class UserLogin:
 
     def from_db(self, user_nickname, db):
         self.__user = db.get_user_by_nickname(user_nickname)
-        print(self.__user)
         return self
 
     def create(self, user):
         self.__user = user
-        print(self.__user)
         return self
 
     def is_authenticated(self):
