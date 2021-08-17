@@ -1,3 +1,5 @@
+import { addOrRemoveClass } from "./general_functions.mjs";
+
 const itemForm = document.querySelectorAll(".registration__form__item");
 const inputForm = document.querySelectorAll(".registration__form__item__input");
 const informationError = document.querySelectorAll(".info-error");
@@ -147,17 +149,6 @@ async function checkingForUniquenessData(input) {
         return true;
     } catch (err) {
         console.error(err);
-    }
-}
-
-
-function addOrRemoveClass(className, action, ...args) {
-    for (let i = 0; i < args.length; ++i) {
-        if (action === "add") {
-            args[i].classList.add(className);
-        } else if (action === "remove") {
-            args[i].classList.remove(className);
-        }
     }
 }
 

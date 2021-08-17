@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_panel_style.css')}}">
+    <script type = "module" src="../static/javascript/profile.mjs"></script>
     <title>Profile</title>
 </head>
 <body>
@@ -102,7 +103,7 @@
             <div class="profile">
                 <div class="profile__avatar">
                     <img class="profile__avatar__icon" src="{{ url_for('static', filename='../static/img/default_img/default_avatar.png')}}" alt="">
-                    <input type="file">
+                    <input class="profile__avatar__change" type="file">
                 </div>
 
                 <div class="profile__content">

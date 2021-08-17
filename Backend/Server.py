@@ -8,7 +8,7 @@ from Database.Database import Database
 from SQLiteErrorCods import *
 from ConstantStorage import *
 from Backend.User.UserLogin import UserLogin
-
+from Backend.Database.Database import *
 from flask import Flask, request, render_template, session, redirect, url_for, g, make_response, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
