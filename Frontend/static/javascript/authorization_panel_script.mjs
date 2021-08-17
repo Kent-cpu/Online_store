@@ -1,4 +1,4 @@
-"use strict"
+import { addOrRemoveClass } from "./general_functions.mjs";
 
 const itemForm = document.querySelectorAll(".authorization__form__item");
 const inputForm = document.querySelectorAll(".authorization__form__item__input");
@@ -73,15 +73,6 @@ function validate(input, indexErrorInfo) {
     }
 }
 
-function addOrRemoveClass(className, action, ...args) {
-    for (let i = 0; i < args.length; ++i) {
-        if (action === "add") {
-            args[i].classList.add(className);
-        } else if (action === "remove") {
-            args[i].classList.remove(className);
-        }
-    }
-}
 
 async function authorization() {
     let requestedData = {

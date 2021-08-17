@@ -8,11 +8,10 @@ from Database.Database import Database
 from SQLiteErrorCods import *
 from ConstantStorage import *
 from Backend.User.UserLogin import UserLogin
-
+from Backend.Database.Database import *
 from flask import Flask, request, render_template, session, redirect, url_for, g, make_response, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
-
 
 class Server:
 
@@ -34,7 +33,11 @@ class Server:
         self.app.add_url_rule('/registration', methods=['POST', 'GET'],
                               view_func=self.registration_page)  # Описывает действия при открытие ссылки + разрешенные методы
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
+<<<<<<< HEAD
+        self.app.add_url_rule('/profile', methods = ['POST', 'GET'], view_func = self.getProfile)
+=======
         self.app.add_url_rule('/upload_user_avatar', methods=['POST', 'GET'], view_func=self.upload_user_avatar)
+>>>>>>> 6b9180092cb4cc0fbdbb0bb7a2f7123f42fd7596
 
         @self.app.before_request
         def before_request():
@@ -150,6 +153,9 @@ class Server:
         elif current_user.get_id() is not None:
             return redirect("/shop")
         return render_template("authorization_panel.html")
+
+    def getProfile(self):
+        return render_template("profile_panel.html")
 
     # Отправка данных в БД
     def registration(self, data):

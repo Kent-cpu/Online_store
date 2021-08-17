@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Landing page">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css')}}">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css')}}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main_style.css')}}">
-    <script src="../static/javascript/main.js"></script>
+    <script type = "module" src="../static/javascript/main.mjs"></script>
     <title>Home</title>
 </head>
 <body>
@@ -86,7 +85,7 @@
                                 <a href="#!" class="user-profile__nickname user-profile__list__item__link">Никнейм</a>
                             </li>
                             <li class="user-profile__list__item">
-                                <a href="#!" class="user-profile__list__item__link">Your profile</a>
+                                <a href="http://127.0.0.1:5000/profile" class="user-profile__list__item__link">Your profile</a>
                             </li>
                             <li class="user-profile__list__item">
                                 <a href="#!" class="user-profile__list__item__link">Your blog</a>
