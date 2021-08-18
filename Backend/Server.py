@@ -55,7 +55,7 @@ class Server:
 
     # Запуск сервера
     def run_server(self):
-        self.server = threading.Thread(target=self.app.run(debug=True), kwargs={
+        self.server = threading.Thread(target=self.app.run(debug=True,threaded=True), kwargs={
             "host": self.host, "port": self.port})
         self.server.start()
         return self.server
@@ -115,7 +115,7 @@ class Server:
                     # Упаковка ответа от БД и конвертация в JSON
                     response = self.response_forming_from_db(self.registration(data[DATA]))
                     if response[REQUEST_TYPE] == OK_CODE_ANSWER:
-                        login_user(UserLogin().create(self.database.get_user_by_nickname(data[NICKNAME])),
+                        login_user(UserLogin().create(self.database.get_user_by_nickname(data[DATA][NICKNAME])),
                                    remember=True)  # Авторизация
                         return json.dumps(self.response_forming_code(OK_CODE))
                     res = make_response(json.dumps(response))

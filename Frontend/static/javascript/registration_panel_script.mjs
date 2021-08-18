@@ -60,7 +60,7 @@ document.querySelector(".registration__form__item__submit").addEventListener("cl
     });
     if (correctData) {
         e.target.classList.add("registration__form__item__submit_disabled");
-        setTimeout(registration, 15000);
+        registration()
     }
 });
 
@@ -132,9 +132,9 @@ function validate(input, indexErrorInfo) {
 
 async function checkingForUniquenessData(input) {
     let requestedData = {
-        type: [CHECK_DATA_FOR_UNIQUENESS],
+        type: CHECK_DATA_FOR_UNIQUENESS,
         [DATA]: {
-            [input.name]: String(input.name),
+            [input.name]: String(input.value),
         },
     }
 
@@ -159,13 +159,14 @@ async function checkingForUniquenessData(input) {
 
 async function registration() {
     let sentData = {
-        type: [REGISTRATION],
+        type: REGISTRATION,
         [DATA]: {
             [NICKNAME]: document.querySelector("._nickname").value,
             [EMAIL]: document.querySelector("._email").value,
             [PASSWORD]: document.querySelector("._password").value,
         },
     };
+    console.log(sentData)
     try {
         const response = await fetch('/registration', {
             method: 'POST',

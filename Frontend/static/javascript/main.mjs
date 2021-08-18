@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
     function showOrHideProfile(userData) {
         if (userData.data.is_login) {
             document.querySelector('.user-profile').style.display = "block";
-            document.querySelector('.user-profile__nickname').innerHTML = userData.requested_data.nickname;
+            document.querySelector('.user-profile__nickname').innerHTML = userData.data.nickname;
         } else {
             document.querySelector('.btn-wrapper').style.display = "block";
         }

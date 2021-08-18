@@ -80,10 +80,10 @@ function validate(input, indexErrorInfo) {
 
 async function authorization() {
     let requestedData = {
-        type: [AUTHORIZATION],
+        type: AUTHORIZATION,
         [DATA]: {
-            [EMAIL]: document.querySelector("._email"),
-            [PASSWORD]: document.querySelector("._password"),
+            [EMAIL]: document.querySelector("._email").value,
+            [PASSWORD]: document.querySelector("._password").value,
             [REMEMBER_ME]: document.querySelector('.checkRemeber').checked,
         },
     };

@@ -3,9 +3,8 @@ import time
 import sys
 import werkzeug.security
 import sys
-sys.path.append("..")
-from ConstantStorage import *
-from SQLiteErrorCods import *
+from Backend.ConstantStorage import *
+from Backend.SQLiteErrorCods import *
 import sqlite3
 from flask import g
 

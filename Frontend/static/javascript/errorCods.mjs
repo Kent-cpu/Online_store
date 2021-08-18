@@ -9,7 +9,7 @@ CODE_MAP.set(OK_CODE, "OK")
 
 
 function get_code_info(code) {
-    if CODE_MAP.has(code) {
+    if (CODE_MAP.has(code)) {
         return CODE_MAP.get(code);
     }
     else {
