@@ -1,4 +1,4 @@
-import { REQUESTED_DATA, USER_INFO } from "./constantStorage.mjs"
+import { REQUESTED_DATA, USER_INFO,AVATAR } from "./constantStorage.mjs"
 
 "use strict"
 

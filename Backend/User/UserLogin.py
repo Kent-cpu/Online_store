@@ -45,8 +45,7 @@ class UserLogin:
             except FileNotFoundError as error:
                 print("Not found")
         else:
-            img = self.__user[AVATAR]
-
+            img = self.__user[4]
         return img
 
     def verifyExt(self, filename):

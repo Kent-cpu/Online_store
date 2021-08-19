@@ -9,9 +9,10 @@ from SQLiteErrorCods import *
 from ConstantStorage import *
 from Backend.User.UserLogin import UserLogin
 from Backend.Database.Database import *
-from flask import Flask, request, render_template, session, redirect, url_for, g, make_response, flash
+from flask import Flask, request, render_template, redirect, url_for, make_response, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from pathlib import Path
+
 
 class Server:
 
@@ -35,6 +36,8 @@ class Server:
         self.app.add_url_rule('/authorization', methods=['POST', 'GET'], view_func=self.authorization_page)
         self.app.add_url_rule('/profile', methods=['POST', 'GET'], view_func=self.get_profile)
         self.app.add_url_rule('/upload_user_avatar', methods=['POST', 'GET'], view_func=self.upload_user_avatar)
+        self.app.add_url_rule('/get_user_avatar', view_func=self.get_user_avatar)
+        self.app.add_url_rule('/post/<alias>', view_func=self.get_post)
 
         @self.app.before_request
         def before_request():
@@ -55,7 +58,7 @@ class Server:
 
     # Запуск сервера
     def run_server(self):
-        self.server = threading.Thread(target=self.app.run(debug=True,threaded=True), kwargs={
+        self.server = threading.Thread(target=self.app.run(debug=True, threaded=True), kwargs={
             "host": self.host, "port": self.port})
         self.server.start()
         return self.server
@@ -71,6 +74,12 @@ class Server:
     def logout(self):
         logout_user()  # Выход из профиля
         return redirect("/shop")
+
+    def get_post(self, alias):
+        title, post = self.database.get_post(alias)
+        if not title:
+            abort(404)
+        return render_template('main.html')
 
     @login_required
     def upload_user_avatar(self):
@@ -90,6 +99,28 @@ class Server:
                 return self.response_forming_code(ERROR_CODE)
         return redirect("/shop")
 
+    @login_required
+    def get_user_avatar(self):
+        try:
+            if current_user.get_id() is not None:
+                img = current_user.get_avatar(self.app)
+                if not img:
+                    return ""
+
+                data = make_response(img)
+                data.headers["Content-Type"] = 'image/png'
+                return data
+            else:
+                with self.app.open_resource(str(Path(
+                        Path(
+                            self.app.root_path) / ".." / "Frontend" / "static" / "img" / "default_img" / "default_avatar.png").resolve()),
+                                            "rb") as f:
+                    img = f.read()
+                    return img
+        except BaseException as e:
+            print(e)
+            return ""
+
     def shop_page(self):
         if request.method == "POST":
             data = request.json
@@ -102,7 +133,8 @@ class Server:
                     }
                     return json.dumps(answer)
                 return json.dumps(self.response_forming_code(ERROR_CODE))
-            except BaseException:
+            except BaseException as e:
+                print(e)
                 return json.dumps(self.response_forming_code(ERROR_CODE))
         return render_template("main.html")  # Отобразить данную страницу
 
@@ -143,8 +175,7 @@ class Server:
                     else:
                         return json.dumps(self.response_forming_code(USER_DOES_NOT_EXIT_ERROR_COD))
                 return json.dumps(self.response_forming_code(ERROR_CODE))
-            except BaseException as error:
-                print(error)
+            except BaseException:
                 return json.dumps(self.response_forming_code(ERROR_CODE))
         elif current_user.get_id() is not None:
             return redirect("/shop")
@@ -199,11 +230,11 @@ class Server:
         }
         return answer
 
-    @staticmethod
-    def get_user_info(arr_of_requested_data):
+    def get_user_info(self, arr_of_requested_data):
         answer = {}
         if current_user.get_id() is not None:
             answer[IS_LOGIN] = True
+
             for data in arr_of_requested_data:
                 if data == EMAIL:
                     answer[EMAIL] = current_user.get_email()
@@ -211,10 +242,6 @@ class Server:
                     answer[NICKNAME] = current_user.get_nickname()
                 elif data == ACCOUNT_CREATION_TIME:
                     answer[NICKNAME] = current_user.get_account_creation_time()
-                elif data == AVATAR:
-                    answer[AVATAR] = current_user.get_avatar()
-                    if not answer[AVATAR]:
-                        answer[AVATAR] = ""
         else:
             answer[IS_LOGIN] = False
         return answer

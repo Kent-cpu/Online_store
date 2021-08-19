@@ -31,14 +31,15 @@ class Database:
     @staticmethod
     def get_user_by_nickname(user_nickname):
         try:
-            g.link_db.commit()
             cursor = g.link_db.cursor()
             cursor.execute("SELECT * FROM Users WHERE nickname = ? LIMIT 1", (user_nickname,))
-            res = cursor.fetchall()
+            res = cursor.fetchall()[0]
             if not res:
+                print("NO")
                 return False
-            return res[0]
+            return res
         except sqlite3.Error as error:
+            print(error)
             return False
 
     @staticmethod
@@ -46,17 +47,16 @@ class Database:
         try:
             cursor = g.link_db.cursor()
             cursor.execute("SELECT * FROM Users WHERE email = ? LIMIT 1", (user_email,))
-            res = cursor.fetchall()
+            res = cursor.fetchall()[0]
             if not res:
                 return False
-            return res[0]
+            return res
         except sqlite3.Error as error:
             return False
 
     @staticmethod
     def check_for_uniqueness(key_value_dict):
         try:
-            cursor = g.link_db.cursor()
             answer = []
             for key in key_value_dict.keys():
                 if key == NICKNAME:
@@ -65,6 +65,7 @@ class Database:
                     count = """SELECT * FROM Users WHERE email LIKE ?;"""
                 else:
                     continue
+                cursor = g.link_db.cursor()
                 cursor.execute(count, (key_value_dict[key],))
                 count = len(cursor.fetchall())
                 if count > 0:
@@ -117,12 +118,14 @@ class Database:
             return ERROR_CODE
         try:
             cursor = g.link_db.cursor()
-            binary = sqlite3.Binary(img)
             update_avatar = "UPDATE users SET avatar = ? WHERE nickname = ?"
-            cursor.execute(update_avatar, (binary, user_nickname))
+            cursor.execute(update_avatar, (img, user_nickname))
             g.link_db.commit()
             return OK_CODE
         except sqlite3.Error as error:
+            return ERROR_CODE
+        except BaseException as error:
+            print(error)
             return ERROR_CODE
 
     def check_user_password(self, user_id, password):
@@ -134,6 +137,18 @@ class Database:
                 return False
         else:
             return False
+
+    @staticmethod
+    def get_post(url_post):
+        try:
+            cursor = g.link_db.cursor()
+            cursor.execute("SELECT title, text FROM Posts WHERE URL = ?")
+            res = cursor.fetchall()[0]
+            if res:
+                return res
+        except sqlite3.Error:
+            return False, False
+        return False, False
 
     def create_db(self):
         database_connection = sqlite3.connect(self.db_path)
